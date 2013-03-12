@@ -1,4 +1,4 @@
-package network;
+package ai;
 
 import list.List;
 import player.Move;
