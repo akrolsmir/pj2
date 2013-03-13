@@ -23,15 +23,16 @@ public class Helper {
     	//So x1, y1 cannot simultaneously be a multiple of 7
     	int x = move.x1;
     	int y = move.y1;
-    	if(x % 7 == 0 && y % 7 == 0){
+    	int len = board.length;
+    	if(x % len  == 0 && y % len == 0){
     		return false;
     	}
     	
     	//No chip may be placed in a goal of the opposite color.
     	//Note that Black cannot be placed in the left/right goal spaces,
     	//and White cannot be placed in the top/down goal spaces
-    	if((color == BLACK && x % 7 == 0) || 
-    	   (color == WHITE && y % 7 == 0)){
+    	if((color == BLACK && x % len == 0) || 
+    	   (color == WHITE && y % len == 0)){
     		return false;
     	}
     	
@@ -46,7 +47,7 @@ public class Helper {
     	for (int i = x - 1; i <= x + 1; i++){
     		for (int j = y - 1; j <= y + 1; j++){
     			//Do not consider case of nonexistent adjacent square
-    			if(i < 0 || i > 7 || j < 0 || j > 7){
+    			if(i < 0 || i > len || j < 0 || j > len){
     				continue;
     			}
     			//If an adjacent chip of the same color is found then check chips adjacent to those
@@ -55,7 +56,7 @@ public class Helper {
     					for(int l = j - 1; l <= j + 1; l++){
     						//Do not consider case of nonexistent adjacent square and coordinates of
     						//proposed move.
-    		    			if(k < 0 || k > 7 || l < 0 || l > 7 || (k == i && l == j) || (k == x && l == y)){
+    		    			if(k < 0 || k > len || l < 0 || l > len || (k == i && l == j)){
     		    				continue;
     		    			}
     		    			  			
@@ -97,7 +98,6 @@ public class Helper {
     	for(int c = -1; c < 2; c = c + 2){
     		for(int i = 0; i < 8; i++){
     			for(int j = 0; j < 8; j++){
-    				System.out.println("Validating (" + i + ", " + j + ")");
     				if(!isValid(c, new Move(i, j), board)){
     					System.out.print("(" + i + ", " + j + ") is an invalid move for ");
     					if (c == BLACK){
