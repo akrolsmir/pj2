@@ -1,5 +1,8 @@
 package ai;
 
+import list.DList;
+import list.DListNode;
+import list.InvalidNodeException;
 import list.List;
 import player.Move;
 
@@ -8,6 +11,8 @@ public class Helper {
 	private final static int BLACK = -1;
 	private final static int EMPTY = 0;
 	private final static int WHITE = 1;
+	private final static int White = 1;
+	private final static int Black = -1;
 
     /**
      * isValid() determines if a given move for a given player on a given board
@@ -111,6 +116,30 @@ public class Helper {
     	}
     }
 
+    private static int numberOfPieces(int color, int[][] board) {
+    	int number = 0;
+    	for (int x = 0; x < board.length; x++) {
+    		for (int y = 0; y < board[0].length; y++) {
+    			if (board[x][y] == color) {
+    				number++;
+    			}
+    		}
+    	}
+    	return number;
+    }
+    
+    private static List locationOfPieces(int color, int[][] board) {
+    	DList listed = new DList();
+    	for (int x = 0; x < board.length; x++) {
+    		for (int y = 0; y < board[0].length; y++) {
+    			if (board[x][y] == color) {
+    				listed.insertFront(new int[] {y, x});
+    			}
+    		}
+    	}
+    	return listed;
+    }
+    
     /**
      * allValidMoves() creates a list of all valid Moves for a given board and
      * player.
@@ -118,10 +147,41 @@ public class Helper {
      * @param color the turn of the current player (determined by color)
      * @param board the current state of the board
      * @return
+     * @throws InvalidNodeException 
      */
-    public List allValidMoves(int color, int[][] board) {
-    	return null;
+    public List allValidMoves(int color, int[][] board) throws InvalidNodeException {
+    	DList validList = new DList();
+    	//differentiates adding and moving pieces
+    	if (Helper.numberOfPieces(color, board) <= 9) {
+    		//iterating through both dimensions of the board
+    		for(int i = 0; i < board.length; i++) {
+        		for(int j = 0; j < board[0].length; j++) {
+        			if (isValid(color, new Move(j, i), board)) {
+        				validList.insertBack(new Move(j, i));
+        			}
+        		}
+        	}
+    	} else {
+    		try {
+    			DListNode location = (DListNode) Helper.locationOfPieces(color, board).front();
+    			//checking valid moves for each different piece
+        		for(; location != null; location = (DListNode) location.next()) {
+        			for(int i = 0; i < board.length; i++) {
+                		for(int j = 0; j < board[0].length; j++) {
+                			Move m = new Move(((int[])location.item())[0], ((int[])location.item())[1], j, i);
+                			if (isValid(color, m, board)) {
+                				validList.insertBack(m);
+                			}
+                		}
+        			}
+        		}
+    		} catch(InvalidNodeException e) {
+    			System.err.println(e);
+    		}
+    	}
+    	return validList;
     }
+    
 
     /**
      * connectedChips() creates a list of all chips which are connected to a
@@ -150,7 +210,35 @@ public class Helper {
 
     /**
      * @param args
+     * @throws InvalidNodeException 
      */
+    
+    
+    private void testAllValidMoves() throws InvalidNodeException {
+    	try {
+    		int[][] board = new int[7][7];
+        	System.out.println("With an empty board, these are the valid moves for White:" + allValidMoves(White, board));
+        	board[4][4] = White;
+        	System.out.println("White goes on (4,4), Black can go on:" + allValidMoves(Black, board));
+        	board[4][3] = Black;
+        	System.out.println("Black goes on (4,3), White can go on:" + allValidMoves(White, board));
+        	board[4][5] = White;
+        	System.out.println("White goes on (4,5), Black can go on:" + allValidMoves(Black, board));
+        	for(int x = 0; x < board.length; x++) {
+        		board[x][2] = White;
+        	}
+        	System.out.println("White has 10 pieces, White can now:" + allValidMoves(White, board));
+        	for(int x = 0; x < board.length; x++) {
+        		for(int y = 0; y < board[0].length; y++) {
+        			board[y][x] = White;
+        		}
+        	}
+        	System.out.println("White has all the spaces, Black can go on:" + allValidMoves(Black, board));
+    	} catch(InvalidNodeException e) {
+    		System.err.println(e);
+    	}
+    }
+    
     public static void main(String[] args) {
         // TODO Auto-generated method stub
     	testValidMove();
