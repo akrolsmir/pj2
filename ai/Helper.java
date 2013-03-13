@@ -50,15 +50,15 @@ public class Helper {
     				continue;
     			}
     			//If an adjacent chip of the same color is found then check chips adjacent to those
-    			if((i != x && j != y) && board[i][j] == color){
+    			if(!(i == x && j == y) && board[i][j] == color){
     				for(int k = i - 1; k <= i + 1; k++){
     					for(int l = j - 1; l <= j + 1; l++){
     						//Do not consider case of nonexistent adjacent square and coordinates of
     						//proposed move.
-    		    			if(k < 0 || k > 7 || l < 0 || l > 7 || (k == x && l == y)){
+    		    			if(k < 0 || k > 7 || l < 0 || l > 7 || (k == i && l == j) || (k == x && l == y)){
     		    				continue;
     		    			}
-    		    			
+    		    			  			
     		    			//If a chip of the same color is found then move is illegal
     		    			if(board[k][l] == color){
     		    				return false;
