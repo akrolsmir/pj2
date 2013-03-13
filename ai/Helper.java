@@ -28,7 +28,7 @@ public class Helper {
     	//So x1, y1 cannot simultaneously be a multiple of 7
     	int x = move.x1;
     	int y = move.y1;
-    	int len = board.length;
+    	int len = board.length - 1;
     	if(x % len  == 0 && y % len == 0){
     		return false;
     	}
@@ -149,7 +149,7 @@ public class Helper {
      * @return
      * @throws InvalidNodeException 
      */
-    public List allValidMoves(int color, int[][] board) throws InvalidNodeException {
+    public static List allValidMoves(int color, int[][] board) throws InvalidNodeException {
     	DList validList = new DList();
     	//differentiates adding and moving pieces
     	if (Helper.numberOfPieces(color, board) <= 9) {
@@ -214,7 +214,7 @@ public class Helper {
      */
     
     
-    private void testAllValidMoves() throws InvalidNodeException {
+    private static void testAllValidMoves() throws InvalidNodeException {
     	try {
     		int[][] board = new int[7][7];
         	System.out.println("With an empty board, these are the valid moves for White:" + allValidMoves(White, board));
