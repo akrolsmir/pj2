@@ -52,7 +52,37 @@ implemented the project.  Your description should include:
      behavior of each method that is available for external callers (outside
      the module) to call.  Don't include methods that are only meant to be
      called from within the module.
-
+     
+Classes:
+	Helper.java
+	AI.java
+	List.java
+	ListNode.java
+	DList.java
+	DListNode.java
+	InvalidNodeException.java
+Modules:
+	Determining whether a move is valid: 
+		Helper.java
+		implemented by Alec Mouri
+		boolean isValid(int color, Move move, int[][] board)
+	Generating a list of all valid moves:
+		Helper.java
+		implemented by Michael Liu
+		List allValidMoves(int color, int[][] board)
+	Finding the chips of the same color that share connections with a chip:
+		Helper.java
+		implemented by Austin Chen
+		List connectedChips(int[] chip, int[][] board)
+	Determining whether a board state contains any networks:
+		Helper.java
+		hasNetwork(int color, int[][] board)
+	Computing an evaluation function for the board:
+		AI.java
+		double eval(int color, int[][]board)
+	Performing a minimax search:
+		AI.java
+		bestMove(int color, int[][]board)
      For each method, provide (1) a method prototype and (2) a complete,
      unambiguous description of the behavior of the method/module.  This
      description should also appear before the method in your code's comments.
