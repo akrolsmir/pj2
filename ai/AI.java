@@ -13,7 +13,7 @@ public class AI {
 	 * @param board the current state of the board
 	 * @return a double signifying the strength of a move
 	 */
-	public double eval(int color, int[][]board){
+	public static double eval(int color, int[][]board){
 		return 0;
 	}
 	
@@ -25,7 +25,7 @@ public class AI {
 	 * @param board the current state of the board
 	 * @return a move with the strongest score using our evaluation function
 	 */
-	public Move bestMove(int color, int[][]board){
+	public static Move bestMove(int color, int[][]board){
 		return null;
 	}
 	
