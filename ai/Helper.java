@@ -1,16 +1,15 @@
 package ai;
 
 import list.DList;
-import list.DListNode;
 import list.InvalidNodeException;
+import java.util.Arrays;
+
 import list.List;
 import player.Move;
 
 public class Helper {
 	
-	private final static int BLACK = -1;
-	private final static int EMPTY = 0;
-	private final static int WHITE = 1;
+	public final static int BLACK = -1, EMPTY = 0, WHITE = 1;
 
     /**
      * isValid() determines if a given move for a given player on a given board
@@ -178,15 +177,56 @@ public class Helper {
     /**
      * connectedChips() creates a list of all chips which are connected to a
      * given chip on the board. Chips are represented by an int array of length
-     * 2, in the form of {x, y}.
+     * 2, in the form of {x, y}. If there is no chip at that location, return
+     * an empty List.
      * 
      * @param chip the position of the chip to check for connections
      * @param board the current state of the board
      * @return a List of int arrays of chip positions 
      */
-    public List connectedChips(int[] chip, int[][] board) {
-    	return null;
-    }
+	public static List connectedChips(int[] chip, int[][] board) {
+		int x0 = chip[0], y0 = chip[1];
+		if (!inBounds(board, x0, y0) || board[x0][y0] == EMPTY) {
+			return new DList();
+		}
+
+		List connectedChips = new DList();
+		// i and j form offsets for each of the 8 directions
+		for (int i = -1; i <= 1; i++) {
+			for (int j = -1; j <= 1; j++) {
+				if (!(i == 0 && j == 0)){
+					// Keep incrementing x and y by i and j, until out of
+					// bounds or chip found
+					int x = x0 + i, y = y0 + j;
+					while (inBounds(board, x, y) && board[x][y] == EMPTY) {
+						x += i;
+						y += j;
+					}
+					// Add to the list if it's the same color as the original
+					if (inBounds(board, x, y) && board[x][y] == board[x0][y0]) {
+						connectedChips.insertBack(new int[] { x, y });
+					}
+				}
+			}
+		}
+		return connectedChips;
+	}
+
+	private static boolean inBounds(int[][] board, int x, int y) {
+		return x >= 0 && x < board.length && y >= 0 && y < board[0].length;
+	}
+	
+	private static void testConnectedChips(){
+        int[][] board = new int[][]{{-1, 0, -1},{1, 1, 0},{1, 0, -1}};
+        List list = connectedChips(new int[]{1, 1}, board);
+        for(Object o: list){
+        	System.out.println(Arrays.toString((int[])o));
+        }
+        list = connectedChips(new int[]{0, 0}, board);
+        for(Object o: list){
+        	System.out.println(Arrays.toString((int[])o));
+        }
+	}
 
     /**
      * hasNetwork() checks to see if a board contains a winning network for a
@@ -196,7 +236,7 @@ public class Helper {
      * @param board the current state of the board
      * @return if there is a valid network
      */
-    public boolean hasNetwork(int color, int[][] board) {
+    public static boolean hasNetwork(int color, int[][] board) {
         return false;
     }
 
@@ -228,9 +268,11 @@ public class Helper {
     }
     
     public static void main(String[] args) {
-        // TODO Auto-generated method stub
     	testValidMove();
     	testAllValidMoves();
+    	testConnectedChips();
     }
 
 }
+
+
