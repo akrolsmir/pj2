@@ -11,8 +11,6 @@ public class Helper {
 	private final static int BLACK = -1;
 	private final static int EMPTY = 0;
 	private final static int WHITE = 1;
-	private final static int White = 1;
-	private final static int Black = -1;
 
     /**
      * isValid() determines if a given move for a given player on a given board
@@ -88,14 +86,14 @@ public class Helper {
     	board[5][4] = WHITE;
     	board[3][1] = BLACK;
     	
-    	System.out.println("There is a white piece at (5, 5) and at (0, 4). There is a black piece at (2, 2) and at (3, 1)");
+    	System.out.println("There is a WHITE piece at (5, 5) and at (0, 4). There is a BLACK piece at (2, 2) and at (3, 1)");
     	System.out.println("Testing for invalid moves...");
     	
-    	System.out.println("Invalid moves for white should be (0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), " +
+    	System.out.println("Invalid moves for WHITE should be (0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), " +
     			"(3, 1), (2, 2), (4, 3), (5, 3), (6, 3), (4, 4), (5, 4), (6, 4), (4, 5), (5, 5), (6, 5), (4, 6), (5, 6), (6, 6) " + 
     			"(0, 7), (1, 7), (2, 7), (3, 7), (4, 7), (5, 7), (6, 7), (7, 7)");
     	
-    	System.out.println("Invalid moves for black should be (0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7), " +
+    	System.out.println("Invalid moves for BLACK should be (0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7), " +
     			"(2, 0), (3, 0), (4, 0), (1, 1), (2, 1), (3, 1), (4, 1), (1, 2), (2, 2), (3, 2), (4, 2), (1, 3), (2, 3), (3, 3), (5, 4), (5, 5), " +
     			"(7, 0), (7, 1), (7, 2), (7, 3), (7, 4), (7, 5) (7, 6), (7, 7)");
     	
@@ -106,9 +104,9 @@ public class Helper {
     				if(!isValid(c, new Move(i, j), board)){
     					System.out.print("(" + i + ", " + j + ") is an invalid move for ");
     					if (c == BLACK){
-    						System.out.println("Black");
+    						System.out.println("BLACK");
     					} else {
-    						System.out.println("White");
+    						System.out.println("WHITE");
     					}
     				}
     			}
@@ -149,7 +147,7 @@ public class Helper {
      * @return
      * @throws InvalidNodeException 
      */
-    public static List allValidMoves(int color, int[][] board) throws InvalidNodeException {
+    public static List allValidMoves(int color, int[][] board) {
     	DList validList = new DList();
     	//differentiates adding and moving pieces
     	if (Helper.numberOfPieces(color, board) <= 9) {
@@ -162,21 +160,15 @@ public class Helper {
         		}
         	}
     	} else {
-    		try {
-    			DListNode location = (DListNode) Helper.locationOfPieces(color, board).front();
-    			//checking valid moves for each different piece
-        		for(; location != null; location = (DListNode) location.next()) {
-        			for(int i = 0; i < board.length; i++) {
-                		for(int j = 0; j < board[0].length; j++) {
-                			Move m = new Move(((int[])location.item())[0], ((int[])location.item())[1], j, i);
-                			if (isValid(color, m, board)) {
-                				validList.insertBack(m);
-                			}
-                		}
-        			}
-        		}
-    		} catch(InvalidNodeException e) {
-    			System.err.println(e);
+    		for(Object o : locationOfPieces(color,board)) {
+    			for(int i = 0; i < board.length; i++) {
+            		for(int j = 0; j < board[0].length; j++) {
+            			Move m = new Move(((int[])o)[0], ((int[])o)[1], j, i);
+            			if (isValid(color, m, board)) {
+            				validList.insertBack(m);
+            			}
+            		}
+    			}
     		}
     	}
     	return validList;
@@ -214,34 +206,31 @@ public class Helper {
      */
     
     
-    private static void testAllValidMoves() throws InvalidNodeException {
-    	try {
-    		int[][] board = new int[7][7];
-        	System.out.println("With an empty board, these are the valid moves for White:" + allValidMoves(White, board));
-        	board[4][4] = White;
-        	System.out.println("White goes on (4,4), Black can go on:" + allValidMoves(Black, board));
-        	board[4][3] = Black;
-        	System.out.println("Black goes on (4,3), White can go on:" + allValidMoves(White, board));
-        	board[4][5] = White;
-        	System.out.println("White goes on (4,5), Black can go on:" + allValidMoves(Black, board));
-        	for(int x = 0; x < board.length; x++) {
-        		board[x][2] = White;
-        	}
-        	System.out.println("White has 10 pieces, White can now:" + allValidMoves(White, board));
-        	for(int x = 0; x < board.length; x++) {
-        		for(int y = 0; y < board[0].length; y++) {
-        			board[y][x] = White;
-        		}
-        	}
-        	System.out.println("White has all the spaces, Black can go on:" + allValidMoves(Black, board));
-    	} catch(InvalidNodeException e) {
-    		System.err.println(e);
+    private static void testAllValidMoves() {
+    	int[][] board = new int[8][8];
+    	System.out.println("With an empty board, these are the valid moves for WHITE:" + allValidMoves(WHITE, board));
+    	board[4][4] = WHITE;
+    	System.out.println("WHITE goes on (4,4), BLACK can go on:" + allValidMoves(BLACK, board));
+    	board[4][3] = BLACK;
+    	System.out.println("BLACK goes on (4,3), WHITE can go on:" + allValidMoves(WHITE, board));
+    	board[4][5] = WHITE;
+    	System.out.println("WHITE goes on (4,5), BLACK can go on:" + allValidMoves(BLACK, board));
+    	for(int x = 0; x < board.length; x++) {
+    		board[x][2] = WHITE;
     	}
+    	System.out.println("WHITE has 10 pieces, WHITE can now:" + allValidMoves(WHITE, board));
+    	for(int x = 0; x < board.length; x++) {
+    		for(int y = 0; y < board[0].length; y++) {
+    			board[y][x] = WHITE;
+    		}
+    	}
+    	System.out.println("WHITE has all the spaces, BLACK can go on:" + allValidMoves(BLACK, board));
     }
     
     public static void main(String[] args) {
         // TODO Auto-generated method stub
     	testValidMove();
+    	testAllValidMoves();
     }
 
 }
