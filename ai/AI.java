@@ -11,9 +11,12 @@ public class AI {
 	 * 
 	 * @param color the turn of the current player (determined by color)
 	 * @param board the current state of the board
+	 * @param depth the depth to which this checks
 	 * @return a double signifying the strength of a move
+	 * 
+	 * @author Alec Mouri, Austin Chen, Michael Liu
 	 */
-	public static double eval(int color, int[][]board){
+	public static double eval(int color, int[][]board, int depth){
 		return 0;
 	}
 	
@@ -23,9 +26,12 @@ public class AI {
 	 * 
 	 * @param color the turn of the current player (determined by color)
 	 * @param board the current state of the board
+	 * @param depth the depth to which eval() checks
 	 * @return a move with the strongest score using our evaluation function
+	 * 
+	 * @author Michael Liu
 	 */
-	public static Move bestMove(int color, int[][]board){
+	public static Move bestMove(int color, int[][]board, int depth){
 		return null;
 	}
 	

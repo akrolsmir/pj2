@@ -19,6 +19,8 @@ public class Helper {
      * @param move the proposed move
      * @param board the current state of the board
      * @return if the proposed move is valid
+     * 
+     * @author Alec Mouri
      */
     public static boolean isValid(int color, Move move, int[][] board) {
         //No chip may be placed in any of the four corners of the board
@@ -144,7 +146,8 @@ public class Helper {
      * @param color the turn of the current player (determined by color)
      * @param board the current state of the board
      * @return
-     * @throws InvalidNodeException 
+     * 
+     * @author Michael Liu
      */
     public static List allValidMoves(int color, int[][] board) {
     	DList validList = new DList();
@@ -182,7 +185,9 @@ public class Helper {
      * 
      * @param chip the position of the chip to check for connections
      * @param board the current state of the board
-     * @return a List of int arrays of chip positions 
+     * @return a List of int arrays of chip positions
+     * 
+     * @author Austin Chen
      */
 	public static List connectedChips(int[] chip, int[][] board) {
 		int x0 = chip[0], y0 = chip[1];
@@ -222,10 +227,12 @@ public class Helper {
         for(Object o: list){
         	System.out.println(Arrays.toString((int[])o));
         }
-        list = connectedChips(new int[]{0, 0}, board);
+        System.out.println("^ should have been: (1, 0), (2, 0)");
+        list = connectedChips(new int[]{0, 2}, board);
         for(Object o: list){
         	System.out.println(Arrays.toString((int[])o));
         }
+        System.out.println("^ should have been: (0, 0), (2, 2)");
 	}
 
     /**
@@ -235,17 +242,13 @@ public class Helper {
      * @param color the turn of the current player (determined by color)
      * @param board the current state of the board
      * @return if there is a valid network
+     * 
+     * @author Alec Mouri
      */
     public static boolean hasNetwork(int color, int[][] board) {
         return false;
     }
 
-    /**
-     * @param args
-     * @throws InvalidNodeException 
-     */
-    
-    
     private static void testAllValidMoves() {
     	int[][] board = new int[8][8];
     	System.out.println("With an empty board, these are the valid moves for WHITE:" + allValidMoves(WHITE, board));

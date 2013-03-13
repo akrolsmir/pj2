@@ -10,13 +10,13 @@ import ai.Helper;
  *  made by both players.  Can select a move for itself.
  */
 public class MachinePlayer extends Player {
-	int[][] board;
-	int color, opponentColor;
+	private int[][] board;
+	private int color, opponentColor, searchDepth;
 
   // Creates a machine player with the given color.  Color is either 0 (black)
   // or 1 (white).  (White has the first move.)
   public MachinePlayer(int color) {
-	  this(color, 1);
+	  this(color, 2);
   }
 
   // Creates a machine player with the given color and search depth.  Color is
@@ -30,13 +30,13 @@ public class MachinePlayer extends Player {
 			this.color = Helper.WHITE;
 			this.opponentColor = Helper.BLACK;
 		}
-		//TODO do something with searchDepth
+		this.searchDepth = searchDepth;
 	}
 
   // Returns a new move by "this" player.  Internally records the move (updates
   // the internal game board) as a move by "this" player.
   public Move chooseMove() {
-    return AI.bestMove(color, board);
+    return AI.bestMove(color, board, searchDepth);
   } 
 
   // If the Move m is legal, records the move as a move by the opponent
