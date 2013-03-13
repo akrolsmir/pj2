@@ -2,13 +2,16 @@
 
 package list;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 /**
  *  A List is a mutable list ADT.  No implementation is provided.
  *
  *  DO NOT CHANGE THIS FILE.
  **/
 
-public abstract class List {
+public abstract class List implements Iterable<Object> {
 
   /**
    *  size is the number of items in the list.
@@ -76,5 +79,43 @@ public abstract class List {
    *  @return a String representation of this List.
    */
   public abstract String toString();
+  
+//	 Iterable implementation:
+	@Override
+	public Iterator<Object> iterator() {
+		return new ListIterator(this);
+	}
+
+	private class ListIterator implements Iterator<Object> {
+
+		List iList;
+		ListNode curr;
+
+		private ListIterator(List list) {
+			iList = list;
+			curr = iList.front();
+		}
+
+		@Override
+		public boolean hasNext() {
+			return curr.isValidNode();
+		}
+
+		@Override
+		public Object next() {
+			try {
+				ListNode temp = curr;
+				curr = curr.next();
+				return temp.item();
+			} catch (InvalidNodeException e) {
+				throw new NoSuchElementException();
+			}
+		}
+
+		@Override
+		public void remove() {
+			// TODO Auto-generated method stub
+		}
+	}
 
 }
