@@ -12,7 +12,7 @@ public class Board {
 	
 	private List blackChips = new DList(), whiteChips = new DList();
 	
-	public int[][] grid;
+	int[][] grid;
 	
 	public Board(){
 		grid = new int[8][8];
@@ -53,7 +53,17 @@ public class Board {
 		StringBuilder result = new StringBuilder();
 		for(int i = 0; i < grid.length; i++){
 			for(int j = 0; j < grid[i].length; j++){
-				result.append(grid[i][j]);
+				switch (grid[i][j]) {
+				case BLACK:
+					result.append(" B");
+					break;
+				case WHITE:
+					result.append(" W");
+					break;
+				default:
+					result.append(" .");
+					break;
+				}
 			}
 			result.append('\n');
 		}
@@ -166,12 +176,18 @@ public class Board {
     	}
     }
 
-    private int numberOfPieces(int color) {
-    	return color == BLACK ? blackChips.length() : whiteChips.length();
-    }
-    
-    private List locationOfPieces(int color) {
-    	return color == BLACK ? blackChips : whiteChips;
+    public List locationOfPieces(int color) {
+    	DList listed = new DList();
+    	for (int x = 0; x < grid.length; x++) {
+    		for (int y = 0; y < grid[0].length; y++) {
+    			if (grid[x][y] == color) {
+    				listed.insertFront(new int[] {y, x});
+    			}
+    		}
+    	}
+    	return listed;
+    	
+    	//return color == BLACK ? blackChips : whiteChips;
     }
     
     /**
@@ -186,7 +202,7 @@ public class Board {
     public List allValidMoves(int color) {
     	DList validList = new DList();
     	//differentiates adding and moving pieces
-    	if (numberOfPieces(color) <= 9) {
+    	if (locationOfPieces(color).length() <= 9) {
     		//iterating through both dimensions of the board
     		for(int i = 0; i < grid.length; i++) {
         		for(int j = 0; j < grid[0].length; j++) {
