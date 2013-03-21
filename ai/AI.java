@@ -3,11 +3,6 @@ package ai;
 import player.Move;
 
 public class AI {
-
-	public final static int BLACK = -1, EMPTY = 0, WHITE = 1;
-	public final static int QUIT = 0;
-	public final static int ADD = 1;
-	public final static int STEP = 2;
 	
 	/**
 	 * eval() analyzes the current board with respect to the current player 
@@ -21,11 +16,11 @@ public class AI {
 	 * 
 	 * @author Alec Mouri, Austin Chen, Michael Liu
 	 */
-	public static double eval(int color, int[][]board, int depth){
+	public static double eval(int color, Board board, int depth){
 		return Math.random();
 	}
 	
-	public static Move bestMove(int color, int[][]board, int depth) {
+	public static Move bestMove(int color, Board board, int depth) {
 		return (Move) bestMoveHelper(color, board, depth, -1.0, 1.-0)[1];
 	}
 	
@@ -42,7 +37,7 @@ public class AI {
 	 * 
 	 * @author Michael Liu
 	 */
-	private static Object[] bestMoveHelper(int color, int[][]board, int depth, double alpha, double beta){
+	private static Object[] bestMoveHelper(int color, Board board, int depth, double alpha, double beta){
 		Object[] optimalMove = new Object[2];
 		
 		if(depth == 0) {
@@ -50,57 +45,57 @@ public class AI {
 			return optimalMove;
 		}
 		
-		if(color == WHITE) {
-			for(Object o: Helper.allValidMoves(color, board)) {
-				if(((Move) o).moveKind == ADD) {
-					board[((Move) o).y1][((Move) o).x1] = WHITE;
-					Object[] trial = bestMoveHelper(BLACK, board, depth - 1, alpha, beta);
+		if(color == Board.WHITE) {
+			for(Object o: board.allValidMoves(color)) {
+				if(((Move) o).moveKind == Move.ADD) {
+					board.grid[((Move) o).y1][((Move) o).x1] = Board.WHITE;
+					Object[] trial = bestMoveHelper(Board.BLACK, board, depth - 1, alpha, beta);
 					if(alpha < (Double) trial[1]) {
 						optimalMove[0] = o;
 						alpha = (Double) trial[1];
 					}
-					board[((Move) o).y1][((Move) o).x1] = EMPTY;
+					board.grid[((Move) o).y1][((Move) o).x1] = Board.EMPTY;
 					if(beta <= alpha) {
 						break;
 					}
 				} else {
-					board[((Move) o).y1][((Move) o).x1] = WHITE;
-					board[((Move) o).y2][((Move) o).x2] = EMPTY;
-					Object[] trial = bestMoveHelper(BLACK, board, depth - 1, alpha, beta);
+					board.grid[((Move) o).y1][((Move) o).x1] = Board.WHITE;
+					board.grid[((Move) o).y2][((Move) o).x2] = Board.EMPTY;
+					Object[] trial = bestMoveHelper(Board.BLACK, board, depth - 1, alpha, beta);
 					if(alpha < (Double) trial[1]) {
 						optimalMove[0] = o;
 						alpha = (Double) trial[1];
 					}
-					board[((Move) o).y1][((Move) o).x1] = EMPTY;
-					board[((Move) o).y2][((Move) o).x2] = WHITE;
+					board.grid[((Move) o).y1][((Move) o).x1] = Board.EMPTY;
+					board.grid[((Move) o).y2][((Move) o).x2] = Board.WHITE;
 					if(beta <= alpha) {
 						break;
 					}
 				}
 			}
 		} else {
-			for(Object o: Helper.allValidMoves(color, board)) {
-				if(((Move) o).moveKind == ADD) {
-					board[((Move) o).y1][((Move) o).x1] = BLACK;
-					Object[] trial = bestMoveHelper(WHITE, board, depth - 1, alpha, beta);
+			for(Object o: board.allValidMoves(color)) {
+				if(((Move) o).moveKind == Move.ADD) {
+					board.grid[((Move) o).y1][((Move) o).x1] = Board.BLACK;
+					Object[] trial = bestMoveHelper(Board.WHITE, board, depth - 1, alpha, beta);
 					if(beta < (Double) trial[1]) {
 						optimalMove[0] = o;
 						beta = (Double) trial[1];
 					}
-					board[((Move) o).y1][((Move) o).x1] = EMPTY;
+					board.grid[((Move) o).y1][((Move) o).x1] = Board.EMPTY;
 					if(beta <= alpha) {
 						break;
 					}
 				} else {
-					board[((Move) o).y1][((Move) o).x1] = BLACK;
-					board[((Move) o).y2][((Move) o).x2] = EMPTY;
-					Object[] trial = bestMoveHelper(WHITE, board, depth - 1, alpha, beta);
+					board.grid[((Move) o).y1][((Move) o).x1] = Board.BLACK;
+					board.grid[((Move) o).y2][((Move) o).x2] = Board.EMPTY;
+					Object[] trial = bestMoveHelper(Board.WHITE, board, depth - 1, alpha, beta);
 					if(beta < (Double) trial[1]) {
 						optimalMove[0] = o;
 						beta = (Double) trial[1];
 					}
-					board[((Move) o).y1][((Move) o).x1] = EMPTY;
-					board[((Move) o).y2][((Move) o).x2] = BLACK;
+					board.grid[((Move) o).y1][((Move) o).x1] = Board.EMPTY;
+					board.grid[((Move) o).y2][((Move) o).x2] = Board.BLACK;
 					if(beta <= alpha) {
 						break;
 					}
