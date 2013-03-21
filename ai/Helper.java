@@ -10,6 +10,9 @@ import player.Move;
 public class Helper {
 	
 	public final static int BLACK = -1, EMPTY = 0, WHITE = 1;
+	private enum Direction {
+		N, E, S, W, NE, SE, SW, NW, NONE
+	}
 
     /**
      * isValid() determines if a given move for a given player on a given board
@@ -246,7 +249,210 @@ public class Helper {
      * @author Alec Mouri
      */
     public static boolean hasNetwork(int color, int[][] board) {
-        return false;
+    	boolean network = false;
+    	List pieces = locationOfPieces(color, board);
+    	for(Object curr : pieces){
+    		//disregard initial path that is not in goal area
+    		if(color == WHITE && ((int[]) curr)[0] % (board.length - 1) == 0 || color == BLACK && ((int[]) curr)[1] % (board.length - 1) == 0){
+	    		network = hasNetworkHelper(new DList(), (int[])curr, color, board, Direction.NONE);
+	    		if(network){
+	    			return network;
+	    		}
+    		}
+    	}
+    	return network;
+    }
+    
+    /**
+     * hasNetworkHelper() is a helper method for hasNetwork() that checks for all rules of a valid network and performs a tree
+     * search to check all possible candidate networks until a valid one is found.
+     * 
+     * @param memo the memoized list of previous chips in the network
+     * @param pos the position of the latest chip in the network
+     * @param color the color of the network we are detecting the network for
+     * @param board the current state of the board
+     * @param dir the previous direction that was searched for
+     * @return
+     */
+    private static boolean hasNetworkHelper(List memo, int[] pos, int color, int[][] board, Direction dir){
+    	int len = board.length;
+    	int posX = pos[0];
+    	int posY = pos[1];
+    	int tempPos;
+    	boolean inNet = false;
+    	boolean foundNetwork = false;
+    	
+    	//If network length is at least 6, return
+    	if(memo.length() >= 6){
+    		return true;
+    	}
+    	
+    	//Begin search across all 8 directions:
+    	
+    	//Note that the same direction cannot be searched in a row.
+    	//E.g. if a chip was arrived to in the Eastward direction, the next
+    	//chips cannot be found in the Eastward direction
+    	
+    	//Chips cannot be jumped over. So path must branch at first chip
+    	//it encounters in a given direction, and opposing chips will block the path
+    	
+    	//All chips in a network cannot appear twice. So the network should be treated
+    	//as a simple graph.
+   
+    	//Search North
+    	if (dir != Direction.N){
+    		//Searched Y strictly decreases
+	    	for(int i = posY - 1; i >= 0; i--){
+	    		tempPos = board[posX][i];
+	    		if(tempPos != EMPTY){
+	    			inNet = inNetwork(memo, pos);
+	    		}
+	    		if(tempPos != color && tempPos != EMPTY || tempPos == color && inNet){
+	    			break;
+	    		}
+	    		if(tempPos == color && inNet){
+	    			memo.insertBack(pos);
+	    			foundNetwork = hasNetworkHelper(memo, new int[] {posX, i}, color, board, Direction.N);
+	    			if(foundNetwork){
+	    				return true;
+	    			}
+	    		}
+	    	}
+    	}
+    	//search South
+    	if (dir != Direction.S){
+	    	//Searched Y strictly increase
+	    	for(int i = posY + 1; i <= len; i++){
+	    		tempPos = board[posX][i];
+	    		if(tempPos != EMPTY){
+	    			inNet = inNetwork(memo, pos);
+	    		}
+	    		if(tempPos != color && tempPos != EMPTY || tempPos == color && inNet){
+	    			break;
+	    		}
+	    		if(tempPos == color && inNet){
+	    			memo.insertBack(pos);
+	    			foundNetwork = hasNetworkHelper(memo, new int[] {posX, i}, color, board, Direction.S);
+	    			if(foundNetwork){
+	    				return true;
+	    			}
+	    		}
+	    	}
+    	}
+    	//Search West
+    	if (dir != Direction.W){
+    		//Searched X strictly decreases
+	    	for(int i = posX - 1; i >= 0; i--){
+	    		tempPos = board[i][posY];
+	    		if(tempPos != EMPTY){
+	    			inNet = inNetwork(memo, pos);
+	    		}
+	    		if(tempPos != color && tempPos != EMPTY || tempPos == color && inNet){
+	    			break;
+	    		}
+	    		if(tempPos == color && inNet){
+	    			memo.insertBack(pos);
+	    			return hasNetworkHelper(memo, new int[] {i, posY}, color, board, Direction.W);
+	    		}
+	    	}
+    	}
+    	//Search East
+    	if (dir != Direction.E){
+	    	//Searched X strictly increases
+	    	for(int i = posX + 1; i <= board.length; i++){
+	    		tempPos = board[i][posY];
+	    		if(tempPos != EMPTY){
+	    			inNet = inNetwork(memo, pos);
+	    		}
+	    		if(tempPos != color && tempPos != EMPTY || tempPos == color && inNet){
+	    			break;
+	    		}
+	    		if(tempPos == color && inNet){
+	    			memo.insertBack(pos);
+	    			return hasNetworkHelper(memo, new int[] {i, posY}, color, board, Direction.E);
+	    		}
+	    	}
+    	}
+    	//search Northeast
+    	if (dir != Direction.NE){
+	    	//Searched X strictly increases, searched Y strictly decreases	
+	    	for(int i = 1; i <= Math.max(len - posX, posY); i++){
+	    		tempPos = board[posX + i][posY - i];
+	    		if(tempPos != EMPTY){
+	    			inNet = inNetwork(memo, pos);
+	    		}
+	    		if(tempPos != color && tempPos != EMPTY || tempPos == color && inNet){
+	    			break;
+	    		}
+	    		if(tempPos == color && inNet){
+	    			memo.insertBack(pos);
+	    			return hasNetworkHelper(memo, new int[] {posX + i, posY - i}, color, board, Direction.NE);
+	    		}
+	    	}
+    	}
+    	//search Southeast
+    	if (dir != Direction.SE){
+    		//Searched X strictly increases, searched Y strictly increases
+    		for(int i = 1; i <= Math.max(len - posX, len - posY); i++){
+    			tempPos = board[posX + i][posY + i];
+    			if(tempPos != EMPTY){
+	    			inNet = inNetwork(memo, pos);
+	    		}
+	    		if(tempPos != color && tempPos != EMPTY || tempPos == color && inNet){
+	    			break;
+	    		}
+	    		if(tempPos == color && inNet){
+	    			memo.insertBack(pos);
+	    			return hasNetworkHelper(memo, new int[] {posX + i, posY + i}, color, board, Direction.SE);
+	    		}
+	    	}
+    	}
+    	//Search Southwest
+    	if (dir != Direction.SW){
+    		//Searched X strictly decreases, searched Y strictly increases
+    		for(int i = 1; i <= Math.max(posX, len - posY); i++){
+    			tempPos = board[posX - i][posY + i];
+    			if(tempPos != EMPTY){
+	    			inNet = inNetwork(memo, pos);
+	    		}
+	    		if(tempPos != color && tempPos != EMPTY || tempPos == color && inNet){
+	    			break;
+	    		}
+	    		if(tempPos == color && inNet){
+	    			memo.insertBack(pos);
+	    			return hasNetworkHelper(memo, new int[] {posX - i, posY + i}, color, board, Direction.SW);
+	    		}
+	    	}
+    	}
+    	//Search Northwest
+    	if (dir != Direction.NW){
+    		//Searched X strictly decreases, searched Y strictly decreases
+    		for(int i = 1; i <= Math.max(posX, posY); i++){
+    			tempPos = board[posX - i][posY - i];
+    			if(tempPos != EMPTY){
+	    			inNet = inNetwork(memo, pos);
+	    		}
+	    		if(tempPos != color && tempPos != EMPTY || tempPos == color && inNet){
+	    			break;
+	    		}
+	    		if(tempPos == color && inNet){
+	    			memo.insertBack(pos);
+	    			return hasNetworkHelper(memo, new int[] {posX - i, posY - i}, color, board, Direction.NW);
+	    		}
+	    	}
+    	}
+    	
+    	//No possible connections found, return false;
+    	return false;
+    }
+    
+    private static boolean inNetwork(List memo, int[] pos){
+    	for(Object o: memo){
+    		if(pos[0] == ((int[])o)[0] && pos[1] == ((int[])o)[1]){
+    			return true;
+    		}
+    	}
+    	return false;
     }
 
     private static void testAllValidMoves() {
