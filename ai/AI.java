@@ -11,13 +11,22 @@ public class AI {
 	 * 
 	 * @param color the turn of the current player (determined by color)
 	 * @param board the current state of the board
-	 * @param depth the depth to which this checks
 	 * @return a double signifying the strength of a move
 	 * 
 	 * @author Alec Mouri, Austin Chen, Michael Liu
 	 */
-	public static double eval(int color, Board board, int depth){
-		return Math.random();
+	public static double eval(int color, Board board){
+		double connections = 0;
+		for(Object pos : board.locationOfPieces(color)){
+			connections += board.connectedChips((int[]) pos).length();
+		}
+		for(Object pos : board.locationOfPieces(-color)){
+			connections -= board.connectedChips((int[]) pos).length();
+		}
+		System.out.println(board + " " + connections);
+		connections /= 2; //b/c doublecounted
+		connections /= 40; //scale down connections
+		return connections;
 	}
 	
 	public static Move bestMove(int color, Board board, int depth) {
@@ -41,7 +50,7 @@ public class AI {
 		Object[] optimalMove = new Object[2];
 		
 		if(depth == 0) {
-			optimalMove[1] = eval(color, board, depth);
+			optimalMove[1] = eval(color, board);
 			return optimalMove;
 		}
 		
@@ -109,8 +118,17 @@ public class AI {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		Board board = new Board();
+		board.grid[4][4] = Board.WHITE;
+		board.grid[2][4] = Board.BLACK;
+		board.grid[2][2] = Board.WHITE;
+		board.grid[4][2] = Board.WHITE;
+		board.grid[6][6] = Board.BLACK;
+		board.grid[6][4] = Board.WHITE;
+		board.grid[4][6] = Board.BLACK;
+		board.grid[4][3] = Board.WHITE;
+		board.grid[2][3] = Board.WHITE;
+		System.out.println(eval(Board.BLACK, board));
 	}
 
 }
