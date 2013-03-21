@@ -1,6 +1,8 @@
 package ai;
 
 import list.DList;
+import list.InvalidNodeException;
+
 import java.util.Arrays;
 
 import list.List;
@@ -289,12 +291,111 @@ public class Board {
      * given player.
      * 
      * @param color the turn of the current player (determined by color)
+     * @param board the current state of the board
      * @return if there is a valid network
      * 
      * @author Alec Mouri
      */
     public boolean hasNetwork(int color) {
-        return false;
+    	List pieces = locationOfPieces(color);
+    	for(Object curr : pieces){
+    		//disregard initial path that is not in goal area
+    		if((color == WHITE && ((int[]) curr)[1] % (grid.length) == 0) || (color == BLACK && ((int[]) curr)[0] % (grid.length) == 0)){
+    			List first = new DList();
+    			first.insertBack(new int[] {((int[])curr)[1], ((int[])curr)[0]});
+	    		if (hasNetworkHelper(first, new int[] {((int[])curr)[1], ((int[])curr)[0]}, color, Direction.NONE)){
+	    			return true;
+	    		}
+    		}
+    	}
+    	return false;
+    }
+    
+	private enum Direction {
+		N, E, S, W, NE, SE, SW, NW, NONE
+	}
+    
+    /**
+     * hasNetworkHelper() is a helper method for hasNetwork() that checks for all rules of a valid network and performs a tree
+     * search to check all possible candidate networks until a valid one is found.
+     * 
+     * @param memo the memoized list of previous chips in the network
+     * @param pos the position of the latest chip in the network
+     * @param color the color of the network we are detecting the network for
+     * @param board the current state of the board
+     * @param dir the previous direction that was searched for
+     * @return
+     */
+    private boolean hasNetworkHelper(List memo, int[] pos, int color, Direction dir){
+    	int len = grid.length - 1;
+    	
+    	List chips = connectedChips(pos);
+    	//If network length is at least 6, return
+    	if(memo.length() >= 6 && ((color == WHITE && pos[0] % len == 0) || (color == BLACK && pos[1] % len == 0))){
+    		return true;
+    	}
+    	
+    	for(Object o: chips){
+    		Direction newDir = getDirection(pos, (int []) o);
+    		if (dir != newDir && !inNetwork(memo, (int []) o)){
+    			memo.insertBack(o);
+    			if(hasNetworkHelper(memo, (int[]) o, color, newDir)){
+    				return true;
+    			} else {
+    				try {
+    				memo.back().remove();
+    				} catch (InvalidNodeException e){
+    					
+    				}
+    			}
+    		}
+    	}
+    	
+    	//No possible connections found, return false;
+    	return false;
+    }
+    
+    private static Direction getDirection(int[] pos, int[] newPos){
+    	if(pos[0] < newPos[0] && pos[1] < newPos[1]){
+    		return Direction.SW;
+    	} else if (pos[0] > newPos[0] && pos[1] > newPos[1]){
+    		return Direction.SE;
+    	} else if (pos[0] > newPos[0] && pos[1] < newPos[1]){
+    		return Direction.NE;
+    	} else if (pos[0] < newPos[0] && pos[1] > newPos[1]){
+    		return Direction.NW;
+    	} else if (pos[0] > newPos[0]){
+    		return Direction.W;
+    	} else if (pos[0] < newPos[0]){
+    		return Direction.E;
+    	} else if (pos[1] < newPos[1]){
+    		return Direction.S;
+    	} else {
+    		return Direction.N;
+    	}
+    }
+    
+    private static boolean inNetwork(List memo, int[] pos){
+    	for(Object o: memo){
+    		if(pos[0] == ((int[])o)[0] && pos[1] == ((int[])o)[1]){
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    private static void testHasNetwork() {
+    	int[][] g = new int[8][8];
+    	System.out.println("Initializing test board...");
+    	g[2][0] = BLACK;
+    	g[2][3] = BLACK;
+    	g[3][2] = BLACK;
+    	g[6][5] = BLACK;
+    	g[3][5] = BLACK;
+    	g[3][7] = BLACK;
+    	Board board = new Board(g);
+    	System.out.println("A network should be detected.");
+    	System.out.println("Network detected: " + board.hasNetwork(BLACK));
     }
 
     private static void testAllValidMoves() {
@@ -322,6 +423,7 @@ public class Board {
     	testValidMove();
     	testAllValidMoves();
     	testConnectedChips();
+    	testHasNetwork();
     }
 
 }
