@@ -249,18 +249,18 @@ public class Helper {
      * @author Alec Mouri
      */
     public static boolean hasNetwork(int color, int[][] board) {
-    	boolean network = false;
     	List pieces = locationOfPieces(color, board);
     	for(Object curr : pieces){
     		//disregard initial path that is not in goal area
-    		if(color == WHITE && ((int[]) curr)[0] % (board.length - 1) == 0 || color == BLACK && ((int[]) curr)[1] % (board.length - 1) == 0){
-	    		network = hasNetworkHelper(new DList(), (int[])curr, color, board, Direction.NONE);
-	    		if(network){
-	    			return network;
+    		if((color == WHITE && ((int[]) curr)[1] % (board.length) == 0) || (color == BLACK && ((int[]) curr)[0] % (board.length) == 0)){
+    			List first = new DList();
+    			first.insertBack(new int[] {((int[])curr)[1], ((int[])curr)[0]});
+	    		if (hasNetworkHelper(first, new int[] {((int[])curr)[1], ((int[])curr)[0]}, color, board, Direction.NONE)){
+	    			return true;
 	    		}
     		}
     	}
-    	return network;
+    	return false;
     }
     
     /**
@@ -275,16 +275,28 @@ public class Helper {
      * @return
      */
     private static boolean hasNetworkHelper(List memo, int[] pos, int color, int[][] board, Direction dir){
-    	int len = board.length;
-    	int posX = pos[0];
-    	int posY = pos[1];
-    	int tempPos;
-    	boolean inNet = false;
-    	boolean foundNetwork = false;
+    	int len = board.length - 1;
     	
+    	List chips = connectedChips(pos, board);
     	//If network length is at least 6, return
-    	if(memo.length() >= 6){
+    	if(memo.length() >= 6 && ((color == WHITE && pos[0] % len == 0) || (color == BLACK && pos[1] % len == 0))){
     		return true;
+    	}
+    	
+    	for(Object o: chips){
+    		Direction newDir = getDirection(pos, (int []) o);
+    		if (dir != newDir && !inNetwork(memo, (int []) o)){
+    			memo.insertBack(o);
+    			if(hasNetworkHelper(memo, (int[]) o, color, board, newDir)){
+    				return true;
+    			} else {
+    				try {
+    				memo.back().remove();
+    				} catch (InvalidNodeException e){
+    					
+    				}
+    			}
+    		}
     	}
     	
     	//Begin search across all 8 directions:
@@ -300,6 +312,7 @@ public class Helper {
     	//as a simple graph.
    
     	//Search North
+    	/*
     	if (dir != Direction.N){
     		//Searched Y strictly decreases
 	    	for(int i = posY - 1; i >= 0; i--){
@@ -310,10 +323,9 @@ public class Helper {
 	    		if(tempPos != color && tempPos != EMPTY || tempPos == color && inNet){
 	    			break;
 	    		}
-	    		if(tempPos == color && inNet){
+	    		if(tempPos == color && !inNet){
 	    			memo.insertBack(pos);
-	    			foundNetwork = hasNetworkHelper(memo, new int[] {posX, i}, color, board, Direction.N);
-	    			if(foundNetwork){
+	    			if (hasNetworkHelper(memo, new int[] {posX, i}, color, board, Direction.N)){
 	    				return true;
 	    			}
 	    		}
@@ -330,10 +342,9 @@ public class Helper {
 	    		if(tempPos != color && tempPos != EMPTY || tempPos == color && inNet){
 	    			break;
 	    		}
-	    		if(tempPos == color && inNet){
+	    		if(tempPos == color && !inNet){
 	    			memo.insertBack(pos);
-	    			foundNetwork = hasNetworkHelper(memo, new int[] {posX, i}, color, board, Direction.S);
-	    			if(foundNetwork){
+	    			if(hasNetworkHelper(memo, new int[] {posX, i}, color, board, Direction.S)){
 	    				return true;
 	    			}
 	    		}
@@ -350,16 +361,18 @@ public class Helper {
 	    		if(tempPos != color && tempPos != EMPTY || tempPos == color && inNet){
 	    			break;
 	    		}
-	    		if(tempPos == color && inNet){
+	    		if(tempPos == color && !inNet){
 	    			memo.insertBack(pos);
-	    			return hasNetworkHelper(memo, new int[] {i, posY}, color, board, Direction.W);
+	    			if(hasNetworkHelper(memo, new int[] {i, posY}, color, board, Direction.W)){
+	    				return true;
+	    			}
 	    		}
 	    	}
     	}
     	//Search East
     	if (dir != Direction.E){
 	    	//Searched X strictly increases
-	    	for(int i = posX + 1; i <= board.length; i++){
+	    	for(int i = posX + 1; i <= len; i++){
 	    		tempPos = board[i][posY];
 	    		if(tempPos != EMPTY){
 	    			inNet = inNetwork(memo, pos);
@@ -367,16 +380,18 @@ public class Helper {
 	    		if(tempPos != color && tempPos != EMPTY || tempPos == color && inNet){
 	    			break;
 	    		}
-	    		if(tempPos == color && inNet){
+	    		if(tempPos == color && !inNet){
 	    			memo.insertBack(pos);
-	    			return hasNetworkHelper(memo, new int[] {i, posY}, color, board, Direction.E);
+	    			if (hasNetworkHelper(memo, new int[] {i, posY}, color, board, Direction.E)){
+	    				return true;
+	    			}
 	    		}
 	    	}
     	}
     	//search Northeast
     	if (dir != Direction.NE){
 	    	//Searched X strictly increases, searched Y strictly decreases	
-	    	for(int i = 1; i <= Math.max(len - posX, posY); i++){
+	    	for(int i = 1; i <= Math.min(len - posX, posY); i++){
 	    		tempPos = board[posX + i][posY - i];
 	    		if(tempPos != EMPTY){
 	    			inNet = inNetwork(memo, pos);
@@ -384,16 +399,18 @@ public class Helper {
 	    		if(tempPos != color && tempPos != EMPTY || tempPos == color && inNet){
 	    			break;
 	    		}
-	    		if(tempPos == color && inNet){
+	    		if(tempPos == color && !inNet){
 	    			memo.insertBack(pos);
-	    			return hasNetworkHelper(memo, new int[] {posX + i, posY - i}, color, board, Direction.NE);
+	    			if (hasNetworkHelper(memo, new int[] {posX + i, posY - i}, color, board, Direction.NE)){
+	    				return true;
+	    			}
 	    		}
 	    	}
     	}
     	//search Southeast
     	if (dir != Direction.SE){
     		//Searched X strictly increases, searched Y strictly increases
-    		for(int i = 1; i <= Math.max(len - posX, len - posY); i++){
+    		for(int i = 1; i <= Math.min(len - posX, len - posY); i++){
     			tempPos = board[posX + i][posY + i];
     			if(tempPos != EMPTY){
 	    			inNet = inNetwork(memo, pos);
@@ -401,16 +418,18 @@ public class Helper {
 	    		if(tempPos != color && tempPos != EMPTY || tempPos == color && inNet){
 	    			break;
 	    		}
-	    		if(tempPos == color && inNet){
+	    		if(tempPos == color && !inNet){
 	    			memo.insertBack(pos);
-	    			return hasNetworkHelper(memo, new int[] {posX + i, posY + i}, color, board, Direction.SE);
+	    			if (hasNetworkHelper(memo, new int[] {posX + i, posY + i}, color, board, Direction.SE)){
+	    				return true;
+	    			}
 	    		}
 	    	}
     	}
     	//Search Southwest
     	if (dir != Direction.SW){
     		//Searched X strictly decreases, searched Y strictly increases
-    		for(int i = 1; i <= Math.max(posX, len - posY); i++){
+    		for(int i = 1; i <= Math.min(posX, len - posY); i++){
     			tempPos = board[posX - i][posY + i];
     			if(tempPos != EMPTY){
 	    			inNet = inNetwork(memo, pos);
@@ -418,16 +437,18 @@ public class Helper {
 	    		if(tempPos != color && tempPos != EMPTY || tempPos == color && inNet){
 	    			break;
 	    		}
-	    		if(tempPos == color && inNet){
+	    		if(tempPos == color && !inNet){
 	    			memo.insertBack(pos);
-	    			return hasNetworkHelper(memo, new int[] {posX - i, posY + i}, color, board, Direction.SW);
+	    			if(hasNetworkHelper(memo, new int[] {posX - i, posY + i}, color, board, Direction.SW)){
+	    				return true;
+	    			}
 	    		}
 	    	}
     	}
     	//Search Northwest
     	if (dir != Direction.NW){
     		//Searched X strictly decreases, searched Y strictly decreases
-    		for(int i = 1; i <= Math.max(posX, posY); i++){
+    		for(int i = 1; i <= Math.min(posX, posY); i++){
     			tempPos = board[posX - i][posY - i];
     			if(tempPos != EMPTY){
 	    			inNet = inNetwork(memo, pos);
@@ -435,15 +456,38 @@ public class Helper {
 	    		if(tempPos != color && tempPos != EMPTY || tempPos == color && inNet){
 	    			break;
 	    		}
-	    		if(tempPos == color && inNet){
+	    		if(tempPos == color && !inNet){
 	    			memo.insertBack(pos);
-	    			return hasNetworkHelper(memo, new int[] {posX - i, posY - i}, color, board, Direction.NW);
+	    			if (hasNetworkHelper(memo, new int[] {posX - i, posY - i}, color, board, Direction.NW)){
+	    				return true;
+	    			}
 	    		}
 	    	}
     	}
+    	*/
     	
     	//No possible connections found, return false;
     	return false;
+    }
+    
+    private static Direction getDirection(int[] pos, int[] newPos){
+    	if(pos[0] < newPos[0] && pos[1] < newPos[1]){
+    		return Direction.SW;
+    	} else if (pos[0] > newPos[0] && pos[1] > newPos[1]){
+    		return Direction.SE;
+    	} else if (pos[0] > newPos[0] && pos[1] < newPos[1]){
+    		return Direction.NE;
+    	} else if (pos[0] < newPos[0] && pos[1] > newPos[1]){
+    		return Direction.NW;
+    	} else if (pos[0] > newPos[0]){
+    		return Direction.W;
+    	} else if (pos[0] < newPos[0]){
+    		return Direction.E;
+    	} else if (pos[1] < newPos[1]){
+    		return Direction.S;
+    	} else {
+    		return Direction.N;
+    	}
     }
     
     private static boolean inNetwork(List memo, int[] pos){
@@ -453,6 +497,19 @@ public class Helper {
     		}
     	}
     	return false;
+    }
+    
+    private static void testHasNetwork() {
+    	int[][] board = new int[8][8];
+    	System.out.println("Initializing test board...");
+    	board[2][0] = BLACK;
+    	board[2][3] = BLACK;
+    	board[3][2] = BLACK;
+    	board[6][5] = BLACK;
+    	board[3][5] = BLACK;
+    	board[3][7] = BLACK;
+    	System.out.println("A network should be detected.");
+    	System.out.println("Network detected: " + hasNetwork(BLACK, board));
     }
 
     private static void testAllValidMoves() {
@@ -480,6 +537,7 @@ public class Helper {
     	testValidMove();
     	testAllValidMoves();
     	testConnectedChips();
+    	testHasNetwork();
     }
 
 }
