@@ -25,6 +25,10 @@ public class AI {
 		return Math.random();
 	}
 	
+	public static Move bestMove(int color, int[][]board, int depth) {
+		return (Move) bestMoveHelper(color, board, depth, -1.0, 1.-0)[1];
+	}
+	
 	/**
 	 * bestMove() returns an Object containing the strongest move for the given player 
 	 * using our evaluation function along with the strength of the given move.
@@ -38,7 +42,7 @@ public class AI {
 	 * 
 	 * @author Michael Liu
 	 */
-	public static Object[] bestMove(int color, int[][]board, int depth, double alpha, double beta){
+	private static Object[] bestMoveHelper(int color, int[][]board, int depth, double alpha, double beta){
 		Object[] optimalMove = new Object[2];
 		
 		if(depth == 0) {
@@ -50,7 +54,7 @@ public class AI {
 			for(Object o: Helper.allValidMoves(color, board)) {
 				if(((Move) o).moveKind == ADD) {
 					board[((Move) o).y1][((Move) o).x1] = WHITE;
-					Object[] trial = bestMove(BLACK, board, depth - 1, alpha, beta);
+					Object[] trial = bestMoveHelper(BLACK, board, depth - 1, alpha, beta);
 					if(alpha < (Double) trial[1]) {
 						optimalMove[0] = o;
 						alpha = (Double) trial[1];
@@ -62,7 +66,7 @@ public class AI {
 				} else {
 					board[((Move) o).y1][((Move) o).x1] = WHITE;
 					board[((Move) o).y2][((Move) o).x2] = EMPTY;
-					Object[] trial = bestMove(BLACK, board, depth - 1, alpha, beta);
+					Object[] trial = bestMoveHelper(BLACK, board, depth - 1, alpha, beta);
 					if(alpha < (Double) trial[1]) {
 						optimalMove[0] = o;
 						alpha = (Double) trial[1];
@@ -78,7 +82,7 @@ public class AI {
 			for(Object o: Helper.allValidMoves(color, board)) {
 				if(((Move) o).moveKind == ADD) {
 					board[((Move) o).y1][((Move) o).x1] = BLACK;
-					Object[] trial = bestMove(WHITE, board, depth - 1, alpha, beta);
+					Object[] trial = bestMoveHelper(WHITE, board, depth - 1, alpha, beta);
 					if(beta < (Double) trial[1]) {
 						optimalMove[0] = o;
 						beta = (Double) trial[1];
@@ -90,7 +94,7 @@ public class AI {
 				} else {
 					board[((Move) o).y1][((Move) o).x1] = BLACK;
 					board[((Move) o).y2][((Move) o).x2] = EMPTY;
-					Object[] trial = bestMove(WHITE, board, depth - 1, alpha, beta);
+					Object[] trial = bestMoveHelper(WHITE, board, depth - 1, alpha, beta);
 					if(beta < (Double) trial[1]) {
 						optimalMove[0] = o;
 						beta = (Double) trial[1];
