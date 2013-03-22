@@ -57,5 +57,17 @@ public class MachinePlayer extends Player {
 	public boolean forceMove(Move m) {
 		return board.makeMove(color, m);
 	}
+	
+	public static void main(String args[]){
+		MachinePlayer player = new MachinePlayer(0);
+		player.opponentMove(new Move(2, 0));
+		player.opponentMove(new Move(2, 5));
+		player.opponentMove(new Move(3, 5));
+		player.opponentMove(new Move(1, 3));
+		player.opponentMove(new Move(5, 5));
+		player.opponentMove(new Move(5, 7));
+		//opp's 33 wins
+		System.out.println(player.chooseMove() + ", should be 33");
+	}
 
 }
