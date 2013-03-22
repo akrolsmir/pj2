@@ -27,6 +27,8 @@ public class Board {
 		grid = init;
 	}
 	
+	
+	
 	/**
 	 * makeMove() tries to make the given move on this board. Returns if the
 	 * move was made (i.e. valid)
@@ -88,10 +90,13 @@ public class Board {
     public boolean isValid(int color, Move move) {
         //No chip may be placed in any of the four corners of the board
     	//So x1, y1 cannot simultaneously be a multiple of 7
+    	int oldX = move.x2;
+    	int oldY = move.y2;
     	int x = move.x1;
     	int y = move.y1;
     	int len = grid.length - 1;
     	int adjacent = 0;
+    	
     	if(x % len  == 0 && y % len == 0){
     		return false;
     	}
@@ -109,6 +114,17 @@ public class Board {
     		return false;
     	}
     	
+    	if(move.moveKind == Move.STEP){
+    		//Cannot step to same location
+    		if(x == oldX && y == oldY){
+    			return false;
+    		}
+    		//Cannot move nonexistent piece
+    		if(grid[oldX][oldY] == EMPTY){
+    			return false;
+    		}
+    		grid[oldX][oldY] = EMPTY;
+    	}
     	//Groups of more than two chips of the same color are not allowed.
     	//Naive implementation since depth of search is at most 2
     	//Note: can probably be optimized.
@@ -124,6 +140,9 @@ public class Board {
     				adjacent += 1;
     				//If two adjacent pieces, then move is not valid
     				if(adjacent == 2){
+    					if(move.moveKind == Move.STEP){
+    						grid[oldX][oldY] = color;
+    					}
     					return false;
     				}
     				for(int k = i - 1; k <= i + 1; k++){
@@ -136,6 +155,9 @@ public class Board {
     		    			  			
     		    			//If a chip of the same color is found then move is illegal
     		    			if(grid[k][l] == color){
+    	    					if(move.moveKind == Move.STEP){
+    	    						grid[oldX][oldY] = color;
+    	    					}
     		    				return false;
     		    			}
     					}
@@ -313,7 +335,7 @@ public class Board {
      * 
      * @author Alec Mouri
      */
-	public boolean hasNetwork(int color) {
+	public boolean hasNetwork(int color, int netLength) {
     	List pieces = locationOfPieces(color);
     	for(Object curr : pieces){
     		int[] c = (int[]) curr;
@@ -322,7 +344,7 @@ public class Board {
     			//memoized list
     			List network = new DList();
     			network.insertBack(c);
-	    		if (hasNetworkHelper(network, c, color, Direction.NONE)){
+	    		if (hasNetworkHelper(network, c, color, Direction.NONE, netLength)){
 	    			return true;
 	    		}
     		}
@@ -341,12 +363,12 @@ public class Board {
      * @param dir the previous direction that was searched for
      * @return
      */
-    private boolean hasNetworkHelper(List memo, int[] pos, int color, Direction dir){
+    private boolean hasNetworkHelper(List memo, int[] pos, int color, Direction dir, int netLength){
     	int len = grid.length - 1;
     	
     	List chips = connectedChips(pos);
     	//If network length is at least 6, return
-    	if(memo.length() >= 6 && ((color == WHITE && pos[0] % len == 0) || (color == BLACK && pos[1] % len == 0))){
+    	if(memo.length() >= netLength && ((color == WHITE && pos[0] % len == 0) || (color == BLACK && pos[1] % len == 0))){
     		return true;
     	}
     	
@@ -357,7 +379,7 @@ public class Board {
     		Direction newDir = getDirection(pos, c);
     		if (dir != newDir && !inNetwork(memo, c)){
     			memo.insertBack(c);
-    			if(hasNetworkHelper(memo, c, color, newDir)){
+    			if(hasNetworkHelper(memo, c, color, newDir, netLength)){
     				return true;
     			} else {
     				try {
@@ -395,11 +417,43 @@ public class Board {
     
     private static boolean inNetwork(List memo, int[] pos){
     	for(Object o: memo){
-    		if(pos[0] == ((int[])o)[0] && pos[1] == ((int[])o)[1]){
+    		int[] curr = (int[]) o;
+    		if(pos[0] == curr[0] && pos[1] == curr[1]){
     			return true;
     		}
     	}
     	return false;
+    }
+    
+    public int longestPathLength(int color){
+    	int length = 0;
+    	List pieces = locationOfPieces(color);
+    	for(Object curr : pieces){
+    		int[] c = (int[]) curr;
+    		List network = new DList();
+    		network.insertBack(c);
+	    	length = Math.max(longestPathLengthHelper(network, c, color, Direction.NONE), length);
+    	}
+    	return length;
+    }
+    
+    private int longestPathLengthHelper(List memo, int[] pos, int color, Direction dir){
+    	int pathLength = memo.length();
+    	
+    	List chips = connectedChips(pos);
+
+    	//iterate over all chips connected to current chip
+    	for(Object curr: chips){
+    		int[] c = (int[]) curr;
+    		Direction newDir = getDirection(pos, c);
+    		if (dir != newDir && !inNetwork(memo, c)){
+    			memo.insertBack(c);
+    			pathLength = Math.max(longestPathLengthHelper(memo, c, color, newDir), pathLength);
+    		}
+    	}
+    	
+    	//No possible connections found, return length of memoized list;
+    	return pathLength;    	
     }
     
     private static void testHasNetwork() {
@@ -412,7 +466,7 @@ public class Board {
     	board.grid[3][5] = BLACK;
     	board.grid[3][7] = BLACK;
     	System.out.println("A network should be detected.");
-    	System.out.println("Network detected: " + board.hasNetwork(BLACK));
+    	System.out.println("Network detected: " + board.hasNetwork(BLACK, 6));
     }
 
     private static void testAllValidMoves() {

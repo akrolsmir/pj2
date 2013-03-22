@@ -16,17 +16,56 @@ public class AI {
 	 * @author Alec Mouri, Austin Chen, Michael Liu
 	 */
 	public static double eval(int color, Board board){
+		//Possible heuristics for determining optimal board state for each player are:
+		//	1. Number of connections currently made
+		//	2. Number of possible moves
+		//	3. Size of largest network
+		//	4. Average distance between connections (smaller distances are more difficult to break)
+		//	5. Whether possible connections can be broken
+		//
+		//In order of importance: Size of largest network > Number of connections currently made > Number of possible moves
 		double connections = 0;
+		double possibleMoves = 0;
+		double ourNetworkLength = 0.0;
+		double opponentNetworkLength = 0.0;
+		double netLength = 0.0;
+		
+		//Check for winning Network
+		for(int i = 10; i >= 6; i--){
+			if(board.hasNetwork(color, i)){
+				return 1;
+			}
+			if(board.hasNetwork(-color, i)){
+				return -1;
+			}
+			
+		}
+		
+		//Size of largest Network
+		ourNetworkLength = board.longestPathLength(color);
+		opponentNetworkLength = board.longestPathLength(-color);
+		netLength = ourNetworkLength - opponentNetworkLength;
+		
+		//Number of current connections
 		for(Object pos : board.locationOfPieces(color)){
 			connections += board.connectedChips((int[]) pos).length();
 		}
 		for(Object pos : board.locationOfPieces(-color)){
 			connections -= board.connectedChips((int[]) pos).length();
 		}
+		
+		//Number of possible moves
+		possibleMoves = board.allValidMoves(color).length() - board.allValidMoves(-color).length();
+		
 //		System.out.println(board + " " + connections);
 		connections /= 2; //b/c doublecounted
 		connections /= 40; //scale down connections
-		return connections;
+		connections *= .3; //weight to .3
+		possibleMoves /= 48;
+		possibleMoves *= .2; //weight to .2
+		netLength /= 10;
+		netLength *= .5; //weight to .5
+		return connections + possibleMoves + netLength;
 	}
 	
 	public static Move bestMove(int color, Board board, int depth) {
