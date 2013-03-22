@@ -11,11 +11,11 @@ import player.Move;
 public class Board {
 	
 	public final static int BLACK = -1, EMPTY = 0, WHITE = 1;
-	enum Direction {
+	private enum Direction {
 		N, E, S, W, NE, SE, SW, NW, NONE
 	}
 	
-	private List blackChips = new DList(), whiteChips = new DList();
+//	private List blackChips = new DList(), whiteChips = new DList();
 	
 	int[][] grid;
 	
@@ -30,35 +30,41 @@ public class Board {
 	
 	
 	/**
-	 * makeMove() tries to make the given move on this board. Returns if the
-	 * move was made (i.e. valid)
+	 * makeMove() tries to make the given move on this board.
 	 * 
 	 * @param color the turn of the current player (determined by color)
 	 * @param move the proposed move
-	 * @return
+	 * @return if the move was made (i.e. valid)
+	 * 
+	 * @author Austin Chen
 	 */
 	public boolean makeMove(int color, Move move){
 	    if(!isValid(color, move)){
 	    	return false;
 	    }
-	    List chipList = color == BLACK ? blackChips : whiteChips;
+//	    List chipList = color == BLACK ? blackChips : whiteChips;
 	    switch(move.moveKind){
 	    case Move.ADD:
 	    	grid[move.x1][move.y1] = color;
-	    	chipList.insertBack(new int[]{move.x1, move.y1});
+//	    	chipList.insertBack(new int[]{move.x1, move.y1});
 	    	break;
 	    case Move.STEP:
 	    	grid[move.x1][move.y1] = color;
 	    	grid[move.x2][move.y2] = EMPTY; 
-	    	chipList.insertBack(new int[]{move.x1, move.y1});
+//	    	chipList.insertBack(new int[]{move.x1, move.y1});
 	    	break;
 	    }
 	    return true;
 	}
 	
+	@Override
 	public String toString(){
-		StringBuilder result = new StringBuilder();
+		StringBuilder result = new StringBuilder(" ");
 		for(int i = 0; i < grid.length; i++){
+			result.append(" " + i);
+		}
+		for(int i = 0; i < grid.length; i++){
+			result.append("\n" + i);
 			for(int j = 0; j < grid[i].length; j++){
 				switch (grid[i][j]) {
 				case BLACK:
@@ -72,7 +78,6 @@ public class Board {
 					break;
 				}
 			}
-			result.append('\n');
 		}
 		return result.toString();
 	}
@@ -492,9 +497,13 @@ public class Board {
     
     public static void main(String[] args) {
 //    	testValidMove();
-//    	testAllValidMoves();
-//    	testConnectedChips();
-//    	testHasNetwork();
+    	testAllValidMoves();
+    	testConnectedChips();
+    	testHasNetwork();
+    	Board board = new Board();
+    	board.makeMove(WHITE, new Move(3, 1));
+    	board.makeMove(WHITE, new Move(2, 3));
+    	System.out.println(board.isValid(WHITE, new Move(3, 2)));
     }
 
 }
