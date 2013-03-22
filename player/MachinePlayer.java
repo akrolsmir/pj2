@@ -36,7 +36,9 @@ public class MachinePlayer extends Player {
   // Returns a new move by "this" player.  Internally records the move (updates
   // the internal game board) as a move by "this" player.
   public Move chooseMove() {
-    return AI.bestMove(color, board, searchDepth);
+    Move move = AI.bestMove(color, board, searchDepth);
+    board.makeMove(color, move);
+    return move;
   } 
 
   // If the Move m is legal, records the move as a move by the opponent
