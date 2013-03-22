@@ -119,7 +119,6 @@ public class AI {
 		
 		if(depth == 0) {
 			optimalMove[1] = eval(-color, board);
-			System.out.println(optimalMove[1]);
 			return optimalMove;
 		}
 		
@@ -131,8 +130,6 @@ public class AI {
 		for(Object o : board.allValidMoves(color)) {
 			Move m = (Move) o;
 			board.makeMove(color, m);
-			System.out.print(m.x1 + " " + m.y1);
-			System.out.print("--");
 			replyMove = bestMoveHelper(-color, AIcolor, board, depth - 1,
 					alpha, beta); 
 			Double heuristic = (Double) replyMove[1];
@@ -226,6 +223,19 @@ public class AI {
 //		System.out.println(board.isValid(Board.WHITE, new Move(3, 1)));
 //		System.out.println(board.allValidMoves(Board.WHITE));
 //		System.out.println(bestMove(Board.WHITE, board, 1));
+		
+//		Board board = new Board();
+		board.grid[6][0] = Board.BLACK;
+		board.grid[6][5] = Board.BLACK;
+		board.grid[3][3] = Board.BLACK;
+		board.grid[3][5] = Board.BLACK;
+		board.grid[5][7] = Board.BLACK;
+		board.grid[5][5] = Board.BLACK;
+//		board.grid[3][0] = Board.BLACK;
+		System.out.println(eval(Board.BLACK, board));
+		System.out.println(bestMove(Board.BLACK, board, 1));
+		System.out.println(board);
+
 	}
 
 }
