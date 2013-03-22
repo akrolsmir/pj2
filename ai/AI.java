@@ -86,17 +86,19 @@ public class AI {
 	 * @author Michael Liu
 	 */
 	private static Object[] bestMoveHelper(int color, int AIcolor, Board board, int depth, double alpha, double beta){
-		Object[] optimalMove = new Object[] {new Move(0, 0), 0.0};
-		Object[] replyMove;
- 		Board copyBoard = new Board();
-		for(int i = 0; i < board.grid.length; i++) {
-    		for(int j = 0; j < board.grid[0].length; j++) {
-    			copyBoard.grid[i][j] = board.grid[i][j];
-    		}
+		if (board.locationOfPieces(AIcolor).length() == 0) {
+			if (board.isValid(AIcolor, new Move(3, 3))) {
+				return new Object[] {new Move(3, 3), 0.0}; 
+			} else {
+				return new Object[] {new Move(3, 4), 0.0};
+			}
 		}
 		
+		Object[] optimalMove = new Object[] {new Move(0, 0), 0.0};
+		Object[] replyMove;
+		
 		if(depth == 0) {
-			optimalMove[1] = eval(color, copyBoard);
+			optimalMove[1] = eval(color, board);
 			return optimalMove;
 		}
 		
@@ -106,17 +108,19 @@ public class AI {
 			optimalMove[1] = beta;
 		}
 		
-		for(Object o : copyBoard.allValidMoves(color)) {
+		for(Object o : board.allValidMoves(color)) {
 			Move m = (Move) o;
-			copyBoard.makeMove(color, m);
-			replyMove = bestMoveHelper(-color, AIcolor, copyBoard, depth - 1,
+			board.makeMove(color, m);
+			replyMove = bestMoveHelper(-color, AIcolor, board, depth - 1,
 					alpha, beta); 
 			Double heuristic = (Double) replyMove[1];
-			copyBoard.makeMove(Board.EMPTY, m);
+			board.grid[m.x1][m.y1] = 0;
+			
 			if (m.moveKind == Move.STEP) {
 				Move y = new Move(m.x2, m.y2);
-				copyBoard.makeMove(color, y);
+				board.makeMove(color, y);
 			}
+			
 			if (color == AIcolor && (Double) optimalMove[1] <= heuristic) {
 				optimalMove[0] = m;
 				optimalMove[1] = heuristic;
@@ -126,6 +130,7 @@ public class AI {
 				optimalMove[1] = heuristic;
 				beta = heuristic;
 			}
+			
 			if (beta <= alpha) {
 				break;
 			}
@@ -150,18 +155,26 @@ public class AI {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+//		Board board = new Board();
+//		board.grid[4][4] = Board.WHITE;
+//		board.grid[2][4] = Board.BLACK;
+//		board.grid[2][2] = Board.WHITE;
+//		board.grid[4][2] = Board.WHITE;
+//		board.grid[6][6] = Board.BLACK;
+//		board.grid[6][4] = Board.WHITE;
+//		board.grid[4][6] = Board.BLACK;
+//		board.grid[4][3] = Board.WHITE;
+//		board.grid[2][3] = Board.WHITE;
+//		System.out.println(eval(Board.BLACK, board));
+//		testBestMove();
 		Board board = new Board();
-		board.grid[4][4] = Board.WHITE;
-		board.grid[2][4] = Board.BLACK;
-		board.grid[2][2] = Board.WHITE;
-		board.grid[4][2] = Board.WHITE;
-		board.grid[6][6] = Board.BLACK;
-		board.grid[6][4] = Board.WHITE;
-		board.grid[4][6] = Board.BLACK;
-		board.grid[4][3] = Board.WHITE;
-		board.grid[2][3] = Board.WHITE;
-		System.out.println(eval(Board.BLACK, board));
-		testBestMove();
+		board.grid[3][3] = Board.WHITE;
+		System.out.println(bestMove(Board.WHITE, board, 1));
+		board.grid[3][4] = Board.WHITE;
+		System.out.println(eval(Board.WHITE, board));
+		board.grid[3][4] = Board.EMPTY;
+		board.grid[0][1] = Board.WHITE;
+		System.out.println(eval(Board.WHITE, board));
 	}
 
 }
