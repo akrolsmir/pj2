@@ -179,16 +179,9 @@ public class Board {
     			}
     		}
     	}
-<<<<<<< HEAD
-		if(move.moveKind == Move.STEP){
-			grid[oldX][oldY] = color;
-		}
-    	
-=======
     	if(move.moveKind == Move.STEP){
 			grid[oldX][oldY] = color;
 		}
->>>>>>> Fixed methods in Board.class and updated eval()
     	//All rules are satisfied so return true
     	return true;
     }
