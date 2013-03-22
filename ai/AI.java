@@ -41,6 +41,7 @@ public class AI {
 		if(board.hasNetwork(-color)){
 			return -1;
 		}
+
 		
 		//Size of largest Network
 		ourNetworkLength = board.longestPathLength(color);
@@ -99,7 +100,7 @@ public class AI {
 		Object[] replyMove;
 		
 		if(depth == 0) {
-			optimalMove[1] = eval(color, board);
+			optimalMove[1] = eval(-color, board);
 			return optimalMove;
 		}
 		
@@ -112,11 +113,12 @@ public class AI {
 		for(Object o : board.allValidMoves(color)) {
 			Move m = (Move) o;
 			board.makeMove(color, m);
+			
 			replyMove = bestMoveHelper(-color, AIcolor, board, depth - 1,
 					alpha, beta); 
 			Double heuristic = (Double) replyMove[1];
-			board.grid[m.x1][m.y1] = 0;
 			
+			board.grid[m.x1][m.y1] = 0;
 			if (m.moveKind == Move.STEP) {
 				Move y = new Move(m.x2, m.y2);
 				board.makeMove(color, y);
@@ -171,10 +173,13 @@ public class AI {
 		Board board = new Board();
 		board.grid[3][3] = Board.WHITE;
 		System.out.println(bestMove(Board.WHITE, board, 1));
-		board.grid[3][4] = Board.WHITE;
-		System.out.println(eval(Board.WHITE, board));
-		board.grid[3][4] = Board.EMPTY;
 		board.grid[0][1] = Board.WHITE;
+		System.out.println(eval(Board.WHITE, board));
+		board.grid[0][1] = 0;
+		board.grid[5][4] = Board.WHITE;
+		System.out.println(eval(Board.WHITE, board));
+		board.grid[5][4] = 0;
+		board.grid[4][4] = Board.WHITE;
 		System.out.println(eval(Board.WHITE, board));
 	}
 
