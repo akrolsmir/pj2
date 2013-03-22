@@ -66,7 +66,7 @@ public class Board {
 		for(int i = 0; i < grid.length; i++){
 			result.append("\n" + i);
 			for(int j = 0; j < grid[i].length; j++){
-				switch (grid[i][j]) {
+				switch (grid[j][i]) {
 				case BLACK:
 					result.append(" B");
 					break;
@@ -378,7 +378,6 @@ public class Board {
     			//memoized list
     			List network = new DList();
     			network.insertBack(c);
-    			System.out.println("(" + c[0] + ", " + c[1] + ")" + ": " + network);
 	    		if (hasNetworkHelper(network, c, color, Direction.NONE)){
 	    			return true;
 	    		}
@@ -404,8 +403,8 @@ public class Board {
     	List chips = connectedChips(pos);
     	try{
 	    	//If network length is at least 6 and network begins and ends at opposite goals
-	    	if(memo.length() >= 6 && ((color == WHITE && pos[0] % len == 0 && pos[0] == ((int[]) memo.front().item())[0]) 
-	    						   || (color == BLACK && pos[1] % len == 0 && pos[1] == ((int[]) memo.front().item())[1]))){
+	    	if(memo.length() >= 6 && ((color == WHITE && pos[0] % len == 0 && pos[0] != ((int[]) memo.front().item())[0]) 
+	    						   || (color == BLACK && pos[1] % len == 0 && pos[1] != ((int[]) memo.front().item())[1]))){
 	    		return true;
 	    	}
     	} catch (InvalidNodeException e){
@@ -420,9 +419,7 @@ public class Board {
     		if (dir != newDir && !inNetwork(memo, c)){
     			memo.insertBack(c);
     			for(int i = 1; i <= memo.length(); i++){
-    				System.out.print("--");
     			}
-    			System.out.println(">(" + c[0] + ", " + c[1] + ")" + ": " + memo);
     			if(hasNetworkHelper(memo, c, color, newDir)){
     				return true;
     			} else {
@@ -515,14 +512,14 @@ public class Board {
     
     private static void testHasNetwork2(){
         Board board = new Board();
-        board.grid[6][0] = Board.WHITE;
-        board.grid[6][5] = Board.WHITE;
-        board.grid[3][3] = Board.WHITE;
-        board.grid[3][5] = Board.WHITE;
-        board.grid[5][7] = Board.WHITE;
-        board.grid[5][5] = Board.WHITE;
+        board.grid[6][0] = Board.BLACK;
+        board.grid[6][5] = Board.BLACK;
+        board.grid[3][3] = Board.BLACK;
+        board.grid[3][5] = Board.BLACK;
+        board.grid[5][7] = Board.BLACK;
+        board.grid[5][5] = Board.BLACK;
         System.out.println(board);
-        System.out.println("Network detected: " + board.hasNetwork(WHITE));
+        System.out.println("Network detected: " + board.hasNetwork(BLACK));
         
     }
 
