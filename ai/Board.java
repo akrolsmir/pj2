@@ -81,6 +81,18 @@ public class Board {
 		}
 		return result.toString();
 	}
+	
+	public int numberChips(int color){
+		int total = 0;
+		for(int i = 0; i < grid.length; i++){
+			for(int j = 0; j < grid.length; j++){
+				if(grid[i][j] == color){
+					total++;
+				}
+			}
+		}
+		return total;
+	}
 
     /**
      * isValid() determines if a given move for a given player on this board
@@ -101,6 +113,11 @@ public class Board {
     	int y = move.y1;
     	int len = grid.length - 1;
     	int adjacent = 0;
+    	
+    	//If less than 10 moves in game, cannot make step moves. Otherwise cannot make add moves.
+    	if(move.moveKind == Move.STEP && numberChips(color) < 10 || move.moveKind == Move.ADD && numberChips(color) >= 10){
+    		return false;
+    	}
     	
     	if(x % len  == 0 && y % len == 0){
     		return false;
@@ -215,9 +232,9 @@ public class Board {
     	}
     	
     	Board boardTwo = new Board();
-    	boardTwo.makeMove(WHITE, new Move (3, 1));
-    	boardTwo.makeMove(WHITE, new Move(2, 3));
-    	System.out.println(boardTwo.isValid(WHITE, new Move(3, 2)));
+    	boardTwo.makeMove(WHITE, new Move (1, 3));
+    	boardTwo.makeMove(WHITE, new Move(0, 2));
+    	System.out.println(boardTwo.isValid(WHITE, new Move(0, 1)));
     	
     }
 
@@ -329,6 +346,17 @@ public class Board {
         }
         System.out.println("^ should have been: (0, 0), (2, 2)");
 	}
+	
+	public float averageChipDistance(int[] chip){
+		List chips = connectedChips(chip);
+		int[] curr;
+		float totalDistance = 0;
+		for(Object o: chips){
+			curr = (int[]) o;
+			totalDistance += Math.max(Math.abs(curr[0] - chip[0]), Math.abs(curr[1] - chip[1]));
+		}
+		return totalDistance / chips.length();
+	}
 
     /**
      * hasNetwork() checks to see if a board contains a winning network for a
@@ -340,16 +368,18 @@ public class Board {
      * 
      * @author Alec Mouri
      */
-	public boolean hasNetwork(int color, int netLength) {
+	public boolean hasNetwork(int color) {
     	List pieces = locationOfPieces(color);
     	for(Object curr : pieces){
     		int[] c = (int[]) curr;
     		//disregard initial path that is not in goal area
-    		if((color == WHITE && c[0] % grid.length == 0) || (color == BLACK && c[1] % grid.length == 0)){
+    		System.out.println(c[0]);
+    		if((color == WHITE && c[0] % (grid.length - 1) == 0) || (color == BLACK && c[1] % (grid.length - 1) == 0)){
     			//memoized list
     			List network = new DList();
     			network.insertBack(c);
-	    		if (hasNetworkHelper(network, c, color, Direction.NONE, netLength)){
+    			System.out.println("(" + c[0] + ", " + c[1] + ")" + ": " + network);
+	    		if (hasNetworkHelper(network, c, color, Direction.NONE)){
 	    			return true;
 	    		}
     		}
@@ -368,13 +398,18 @@ public class Board {
      * @param dir the previous direction that was searched for
      * @return
      */
-    private boolean hasNetworkHelper(List memo, int[] pos, int color, Direction dir, int netLength){
+    private boolean hasNetworkHelper(List memo, int[] pos, int color, Direction dir){
     	int len = grid.length - 1;
     	
     	List chips = connectedChips(pos);
-    	//If network length is at least 6, return
-    	if(memo.length() >= netLength && ((color == WHITE && pos[0] % len == 0) || (color == BLACK && pos[1] % len == 0))){
-    		return true;
+    	try{
+	    	//If network length is at least 6 and network begins and ends at opposite goals
+	    	if(memo.length() >= 6 && ((color == WHITE && pos[0] % len == 0 && pos[0] == ((int[]) memo.front().item())[0]) 
+	    						   || (color == BLACK && pos[1] % len == 0 && pos[1] == ((int[]) memo.front().item())[1]))){
+	    		return true;
+	    	}
+    	} catch (InvalidNodeException e){
+    		//do nothing
     	}
     	
 
@@ -384,7 +419,11 @@ public class Board {
     		Direction newDir = getDirection(pos, c);
     		if (dir != newDir && !inNetwork(memo, c)){
     			memo.insertBack(c);
-    			if(hasNetworkHelper(memo, c, color, newDir, netLength)){
+    			for(int i = 1; i <= memo.length(); i++){
+    				System.out.print("--");
+    			}
+    			System.out.println(">(" + c[0] + ", " + c[1] + ")" + ": " + memo);
+    			if(hasNetworkHelper(memo, c, color, newDir)){
     				return true;
     			} else {
     				try {
@@ -471,7 +510,20 @@ public class Board {
     	board.grid[3][5] = BLACK;
     	board.grid[3][7] = BLACK;
     	System.out.println("A network should be detected.");
-    	System.out.println("Network detected: " + board.hasNetwork(BLACK, 6));
+    	System.out.println("Network detected: " + board.hasNetwork(BLACK));
+    }
+    
+    private static void testHasNetwork2(){
+        Board board = new Board();
+        board.grid[6][0] = Board.WHITE;
+        board.grid[6][5] = Board.WHITE;
+        board.grid[3][3] = Board.WHITE;
+        board.grid[3][5] = Board.WHITE;
+        board.grid[5][7] = Board.WHITE;
+        board.grid[5][5] = Board.WHITE;
+        System.out.println(board);
+        System.out.println("Network detected: " + board.hasNetwork(WHITE));
+        
     }
 
     private static void testAllValidMoves() {
@@ -497,13 +549,9 @@ public class Board {
     
     public static void main(String[] args) {
 //    	testValidMove();
-    	testAllValidMoves();
-    	testConnectedChips();
-    	testHasNetwork();
-    	Board board = new Board();
-    	board.makeMove(WHITE, new Move(3, 1));
-    	board.makeMove(WHITE, new Move(2, 3));
-    	System.out.println(board.isValid(WHITE, new Move(3, 2)));
+//    	testAllValidMoves();
+//   	testConnectedChips();
+    	testHasNetwork2();
     }
 
 }

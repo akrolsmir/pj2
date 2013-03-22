@@ -23,22 +23,23 @@ public class AI {
 		//	4. Average distance between connections (smaller distances are more difficult to break)
 		//	5. Whether possible connections can be broken
 		//
-		//In order of importance: Size of largest network > Number of connections currently made > Number of possible moves
+		//In order of importance: Number of connections currently made > Number of possible moves > Size of largest Network
 		double connections = 0;
 		double possibleMoves = 0;
 		double ourNetworkLength = 0.0;
 		double opponentNetworkLength = 0.0;
 		double netLength = 0.0;
 		
+		double connectionWeight = .5;
+		double possibleMovesWeight = .3;
+		double longestNetworkWeight = .2;
+		
 		//Check for winning Network
-		for(int i = 10; i >= 6; i--){
-			if(board.hasNetwork(color, i)){
-				return 1;
-			}
-			if(board.hasNetwork(-color, i)){
-				return -1;
-			}
-			
+		if(board.hasNetwork(color)){
+			return 1;
+		}
+		if(board.hasNetwork(-color)){
+			return -1;
 		}
 		
 		//Size of largest Network
@@ -60,11 +61,11 @@ public class AI {
 //		System.out.println(board + " " + connections);
 		connections /= 2; //b/c doublecounted
 		connections /= 40; //scale down connections
-		connections *= .3; //weight to .3
+		connections *= connectionWeight; //weight to .3
 		possibleMoves /= 48;
-		possibleMoves *= .2; //weight to .2
+		possibleMoves *= possibleMovesWeight; //weight to .2
 		netLength /= 10;
-		netLength *= .5; //weight to .5
+		netLength *= longestNetworkWeight; //weight to .5
 		return connections + possibleMoves + netLength;
 	}
 	
