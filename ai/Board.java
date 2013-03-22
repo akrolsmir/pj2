@@ -91,6 +91,7 @@ public class Board {
     	int x = move.x1;
     	int y = move.y1;
     	int len = grid.length - 1;
+    	int adjacent = 0;
     	if(x % len  == 0 && y % len == 0){
     		return false;
     	}
@@ -113,12 +114,18 @@ public class Board {
     	//Note: can probably be optimized.
     	for (int i = x - 1; i <= x + 1; i++){
     		for (int j = y - 1; j <= y + 1; j++){
-    			//Do not consider case of nonexistent adjacent square
-    			if(i < 0 || i > len || j < 0 || j > len){
+
+    			//Do not consider case of nonexistent adjacent square and the square we want to make sure that is valid
+    			if(i < 0 || i > len || j < 0 || j > len || (i == x && j == y)){
     				continue;
     			}
     			//If an adjacent chip of the same color is found then check chips adjacent to those
     			if(!(i == x && j == y) && grid[i][j] == color){
+    				adjacent += 1;
+    				//If two adjacent pieces, then move is not valid
+    				if(adjacent == 2){
+    					return false;
+    				}
     				for(int k = i - 1; k <= i + 1; k++){
     					for(int l = j - 1; l <= j + 1; l++){
     						//Do not consider case of nonexistent adjacent square and coordinates of
@@ -179,6 +186,12 @@ public class Board {
     			}
     		}
     	}
+    	
+    	Board boardTwo = new Board();
+    	boardTwo.makeMove(WHITE, new Move (3, 1));
+    	boardTwo.makeMove(WHITE, new Move(2, 3));
+    	System.out.println(boardTwo.isValid(WHITE, new Move(3, 2)));
+    	
     }
 
     public List locationOfPieces(int color) {
