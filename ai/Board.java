@@ -183,7 +183,7 @@ public class Board {
     	for (int x = 0; x < grid.length; x++) {
     		for (int y = 0; y < grid[0].length; y++) {
     			if (grid[x][y] == color) {
-    				listed.insertFront(new int[] {y, x});
+    				listed.insertFront(new int[] {x, y});
     			}
     		}
     	}
@@ -208,8 +208,8 @@ public class Board {
     		//iterating through both dimensions of the board
     		for(int i = 0; i < grid.length; i++) {
         		for(int j = 0; j < grid[0].length; j++) {
-        			if (isValid(color, new Move(j, i))) {
-        				validList.insertBack(new Move(j, i));
+        			if (isValid(color, new Move(i, j))) {
+        				validList.insertBack(new Move(i, j));
         			}
         		}
         	}
@@ -217,7 +217,7 @@ public class Board {
     		for(Object o : locationOfPieces(color)) {
     			for(int i = 0; i < grid.length; i++) {
             		for(int j = 0; j < grid[0].length; j++) {
-            			Move m = new Move(((int[])o)[0], ((int[])o)[1], j, i);
+            			Move m = new Move(((int[])o)[0], ((int[])o)[1], i, j);
             			if (isValid(color, m)) {
             				validList.insertBack(m);
             			}

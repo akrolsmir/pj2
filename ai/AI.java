@@ -51,7 +51,7 @@ public class AI {
 		Board copyBoard = new Board();
 		for(int i = 0; i < board.grid.length; i++) {
     		for(int j = 0; j < board.grid[0].length; j++) {
-    			copyBoard.grid[j][i] = board.grid[j][i];
+    			copyBoard.grid[i][j] = board.grid[i][j];
     		}
 		}
 		
@@ -61,28 +61,29 @@ public class AI {
 		}
 		
 		if(color == Board.WHITE) {
+			System.out.println(copyBoard.allValidMoves(color));
 			for(Object o: copyBoard.allValidMoves(color)) {
 				if(((Move) o).moveKind == Move.ADD) {
-					copyBoard.grid[((Move) o).y1][((Move) o).x1] = Board.WHITE;
+					copyBoard.grid[((Move) o).x1][((Move) o).y1] = Board.WHITE;
 					Object[] trial = bestMoveHelper(Board.BLACK, copyBoard, depth - 1, alpha, beta);
 					if(alpha < (Double) trial[1]) {
 						optimalMove[0] = o;
 						alpha = (Double) trial[1];
 					}
-					copyBoard.grid[((Move) o).y1][((Move) o).x1] = Board.EMPTY;
+					copyBoard.grid[((Move) o).x1][((Move) o).y1] = Board.EMPTY;
 					if(beta <= alpha) {
 						break;
 					}
 				} else {
-					copyBoard.grid[((Move) o).y1][((Move) o).x1] = Board.WHITE;
-					copyBoard.grid[((Move) o).y2][((Move) o).x2] = Board.EMPTY;
+					copyBoard.grid[((Move) o).x1][((Move) o).y1] = Board.WHITE;
+					copyBoard.grid[((Move) o).x2][((Move) o).y2] = Board.EMPTY;
 					Object[] trial = bestMoveHelper(Board.BLACK, copyBoard, depth - 1, alpha, beta);
 					if(alpha < (Double) trial[1]) {
 						optimalMove[0] = o;
 						alpha = (Double) trial[1];
 					}
-					copyBoard.grid[((Move) o).y1][((Move) o).x1] = Board.EMPTY;
-					copyBoard.grid[((Move) o).y2][((Move) o).x2] = Board.WHITE;
+					copyBoard.grid[((Move) o).x1][((Move) o).y1] = Board.EMPTY;
+					copyBoard.grid[((Move) o).x2][((Move) o).y2] = Board.WHITE;
 					if(beta <= alpha) {
 						break;
 					}
@@ -91,26 +92,26 @@ public class AI {
 		} else {
 			for(Object o: copyBoard.allValidMoves(color)) {
 				if(((Move) o).moveKind == Move.ADD) {
-					copyBoard.grid[((Move) o).y1][((Move) o).x1] = Board.BLACK;
+					copyBoard.grid[((Move) o).x1][((Move) o).y1] = Board.BLACK;
 					Object[] trial = bestMoveHelper(Board.WHITE, copyBoard, depth - 1, alpha, beta);
 					if(beta > (Double) trial[1]) {
 						optimalMove[0] = o;
 						beta = (Double) trial[1];
 					}
-					copyBoard.grid[((Move) o).y1][((Move) o).x1] = Board.EMPTY;
+					copyBoard.grid[((Move) o).x1][((Move) o).y1] = Board.EMPTY;
 					if(beta <= alpha) {
 						break;
 					}
 				} else {
-					copyBoard.grid[((Move) o).y1][((Move) o).x1] = Board.BLACK;
-					copyBoard.grid[((Move) o).y2][((Move) o).x2] = Board.EMPTY;
+					copyBoard.grid[((Move) o).x1][((Move) o).y1] = Board.BLACK;
+					copyBoard.grid[((Move) o).x2][((Move) o).y2] = Board.EMPTY;
 					Object[] trial = bestMoveHelper(Board.WHITE, copyBoard, depth - 1, alpha, beta);
 					if(beta > (Double) trial[1]) {
 						optimalMove[0] = o;
 						beta = (Double) trial[1];
 					}
-					copyBoard.grid[((Move) o).y1][((Move) o).x1] = Board.EMPTY;
-					copyBoard.grid[((Move) o).y2][((Move) o).x2] = Board.BLACK;
+					copyBoard.grid[((Move) o).x1][((Move) o).y1] = Board.EMPTY;
+					copyBoard.grid[((Move) o).x2][((Move) o).y2] = Board.BLACK;
 					if(beta <= alpha) {
 						break;
 					}
