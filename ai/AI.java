@@ -30,7 +30,7 @@ public class AI {
 	}
 	
 	public static Move bestMove(int color, Board board, int depth) {
-		return (Move) bestMoveHelper(color, board, depth, -1.0, 1.0)[0];
+		return (Move) bestMoveHelper(color, color, board, depth, -1.0, 1.0)[0];
 	}
 	
 	/**
@@ -46,9 +46,10 @@ public class AI {
 	 * 
 	 * @author Michael Liu
 	 */
-	private static Object[] bestMoveHelper(int color, Board board, int depth, double alpha, double beta){
-		Object[] optimalMove = new Object[] {new Move(), 0.0};
-		Board copyBoard = new Board();
+	private static Object[] bestMoveHelper(int color, int AIcolor, Board board, int depth, double alpha, double beta){
+		Object[] optimalMove = new Object[] {new Move(0, 0), 0.0};
+		Object[] replyMove;
+ 		Board copyBoard = new Board();
 		for(int i = 0; i < board.grid.length; i++) {
     		for(int j = 0; j < board.grid[0].length; j++) {
     			copyBoard.grid[i][j] = board.grid[i][j];
@@ -60,26 +61,34 @@ public class AI {
 			return optimalMove;
 		}
 		
-		for (Object o : copyBoard.allValidMoves(color)) {
+		if (color == AIcolor) {
+			optimalMove[1] = alpha;
+		} else {
+			optimalMove[1] = beta;
+		}
+		
+		for(Object o : copyBoard.allValidMoves(color)) {
 			Move m = (Move) o;
 			copyBoard.makeMove(color, m);
-			Object[] trial = bestMoveHelper(0 - color, copyBoard, depth - 1,
-					alpha, beta);
-			Double heuristic = (Double) trial[1];
-			if (color == Board.WHITE && alpha < heuristic) {
-				optimalMove[0] = m;
-				alpha = heuristic;
-			} else if (beta > heuristic) {
-				optimalMove[0] = m;
-				beta = heuristic;
-			}
-			if (beta <= alpha) {
-				break;
-			}
+			replyMove = bestMoveHelper(-color, AIcolor, copyBoard, depth - 1,
+					alpha, beta); 
+			Double heuristic = (Double) replyMove[1];
 			copyBoard.makeMove(Board.EMPTY, m);
 			if (m.moveKind == Move.STEP) {
 				Move y = new Move(m.x2, m.y2);
 				copyBoard.makeMove(color, y);
+			}
+			if (color == AIcolor && (Double) optimalMove[1] <= heuristic) {
+				optimalMove[0] = m;
+				optimalMove[1] = heuristic;
+				alpha = heuristic;
+			} else if (color == -AIcolor && (Double) optimalMove[1] >= heuristic) {
+				optimalMove[0] = m;
+				optimalMove[1] = heuristic;
+				beta = heuristic;
+			}
+			if (beta <= alpha) {
+				break;
 			}
 		}
 		return optimalMove;

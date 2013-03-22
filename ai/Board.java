@@ -234,7 +234,7 @@ public class Board {
     		for(Object o : locationOfPieces(color)) {
     			for(int i = 0; i < grid.length; i++) {
             		for(int j = 0; j < grid[0].length; j++) {
-            			Move m = new Move(((int[])o)[0], ((int[])o)[1], i, j);
+            			Move m = new Move(i, j, ((int[])o)[0], ((int[])o)[1]);
             			if (isValid(color, m)) {
             				validList.insertBack(m);
             			}
@@ -416,31 +416,31 @@ public class Board {
     }
 
     private static void testAllValidMoves() {
-    	Board board = new Board();
-    	System.out.println("With an empty board, these are the valid moves for WHITE:" + board.allValidMoves(WHITE));
-    	board.grid[4][4] = WHITE;
-    	System.out.println("WHITE goes on (4,4), BLACK can go on:" + board.allValidMoves(BLACK));
-    	board.grid[4][3] = BLACK;
-    	System.out.println("BLACK goes on (4,3), WHITE can go on:" + board.allValidMoves(WHITE));
-    	board.grid[4][5] = WHITE;
-    	System.out.println("WHITE goes on (4,5), BLACK can go on:" + board.allValidMoves(BLACK));
-    	for(int x = 0; x < board.grid.length; x++) {
-    		board.grid[x][2] = WHITE;
-    	}
-    	System.out.println("WHITE has 10 pieces, WHITE can now:" + board.allValidMoves(WHITE));
-    	for(int x = 0; x < board.grid.length; x++) {
-    		for(int y = 0; y < board.grid[0].length; y++) {
-    			board.grid[y][x] = WHITE;
-    		}
-    	}
-    	System.out.println("WHITE has all the spaces, BLACK can go on:" + board.allValidMoves(BLACK));
+//    	Board board = new Board();
+//    	System.out.println("With an empty board, these are the valid moves for WHITE:" + board.allValidMoves(WHITE));
+//    	board.grid[4][4] = WHITE;
+//    	System.out.println("WHITE goes on (4,4), BLACK can go on:" + board.allValidMoves(BLACK));
+//    	board.grid[4][3] = BLACK;
+//    	System.out.println("BLACK goes on (4,3), WHITE can go on:" + board.allValidMoves(WHITE));
+//    	board.grid[4][5] = WHITE;
+//    	System.out.println("WHITE goes on (4,5), BLACK can go on:" + board.allValidMoves(BLACK));
+//    	for(int x = 0; x < board.grid.length; x++) {
+//    		board.grid[x][2] = WHITE;
+//    	}
+//    	System.out.println("WHITE has 10 pieces, WHITE can now:" + board.allValidMoves(WHITE));
+//    	for(int x = 0; x < board.grid.length; x++) {
+//    		for(int y = 0; y < board.grid[0].length; y++) {
+//    			board.grid[y][x] = WHITE;
+//    		}
+//    	}
+//    	System.out.println("WHITE has all the spaces, BLACK can go on:" + board.allValidMoves(BLACK));
     }
     
     public static void main(String[] args) {
-    	testValidMove();
+//    	testValidMove();
     	testAllValidMoves();
-    	testConnectedChips();
-    	testHasNetwork();
+//    	testConnectedChips();
+//    	testHasNetwork();
     }
 
 }
