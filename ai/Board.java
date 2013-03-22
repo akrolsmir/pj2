@@ -11,6 +11,9 @@ import player.Move;
 public class Board {
 	
 	public final static int BLACK = -1, EMPTY = 0, WHITE = 1;
+	enum Direction {
+		N, E, S, W, NE, SE, SW, NW, NONE
+	}
 	
 	private List blackChips = new DList(), whiteChips = new DList();
 	
@@ -296,24 +299,22 @@ public class Board {
      * 
      * @author Alec Mouri
      */
-    public boolean hasNetwork(int color) {
+	public boolean hasNetwork(int color) {
     	List pieces = locationOfPieces(color);
     	for(Object curr : pieces){
+    		int[] c = (int[]) curr;
     		//disregard initial path that is not in goal area
-    		if((color == WHITE && ((int[]) curr)[1] % (grid.length) == 0) || (color == BLACK && ((int[]) curr)[0] % (grid.length) == 0)){
-    			List first = new DList();
-    			first.insertBack(new int[] {((int[])curr)[1], ((int[])curr)[0]});
-	    		if (hasNetworkHelper(first, new int[] {((int[])curr)[1], ((int[])curr)[0]}, color, Direction.NONE)){
+    		if((color == WHITE && c[0] % grid.length == 0) || (color == BLACK && c[1] % grid.length == 0)){
+    			//memoized list
+    			List network = new DList();
+    			network.insertBack(c);
+	    		if (hasNetworkHelper(network, c, color, Direction.NONE)){
 	    			return true;
 	    		}
     		}
     	}
     	return false;
     }
-    
-	private enum Direction {
-		N, E, S, W, NE, SE, SW, NW, NONE
-	}
     
     /**
      * hasNetworkHelper() is a helper method for hasNetwork() that checks for all rules of a valid network and performs a tree
@@ -335,11 +336,14 @@ public class Board {
     		return true;
     	}
     	
-    	for(Object o: chips){
-    		Direction newDir = getDirection(pos, (int []) o);
-    		if (dir != newDir && !inNetwork(memo, (int []) o)){
-    			memo.insertBack(o);
-    			if(hasNetworkHelper(memo, (int[]) o, color, newDir)){
+
+    	//iterate over all chips connected to current chip
+    	for(Object curr: chips){
+    		int[] c = (int[]) curr;
+    		Direction newDir = getDirection(pos, c);
+    		if (dir != newDir && !inNetwork(memo, c)){
+    			memo.insertBack(c);
+    			if(hasNetworkHelper(memo, c, color, newDir)){
     				return true;
     			} else {
     				try {
@@ -356,13 +360,13 @@ public class Board {
     }
     
     private static Direction getDirection(int[] pos, int[] newPos){
-    	if(pos[0] < newPos[0] && pos[1] < newPos[1]){
+    	if(pos[0] > newPos[0] && pos[1] < newPos[1]){
     		return Direction.SW;
-    	} else if (pos[0] > newPos[0] && pos[1] > newPos[1]){
+    	} else if (pos[0] < newPos[0] && pos[1] < newPos[1]){
     		return Direction.SE;
-    	} else if (pos[0] > newPos[0] && pos[1] < newPos[1]){
-    		return Direction.NE;
     	} else if (pos[0] < newPos[0] && pos[1] > newPos[1]){
+    		return Direction.NE;
+    	} else if (pos[0] > newPos[0] && pos[1] > newPos[1]){
     		return Direction.NW;
     	} else if (pos[0] > newPos[0]){
     		return Direction.W;
@@ -385,15 +389,14 @@ public class Board {
     }
     
     private static void testHasNetwork() {
-    	int[][] g = new int[8][8];
+    	Board board = new Board();
     	System.out.println("Initializing test board...");
-    	g[2][0] = BLACK;
-    	g[2][3] = BLACK;
-    	g[3][2] = BLACK;
-    	g[6][5] = BLACK;
-    	g[3][5] = BLACK;
-    	g[3][7] = BLACK;
-    	Board board = new Board(g);
+    	board.grid[2][0] = BLACK;
+    	board.grid[2][3] = BLACK;
+    	board.grid[3][2] = BLACK;
+    	board.grid[6][5] = BLACK;
+    	board.grid[3][5] = BLACK;
+    	board.grid[3][7] = BLACK;
     	System.out.println("A network should be detected.");
     	System.out.println("Network detected: " + board.hasNetwork(BLACK));
     }
