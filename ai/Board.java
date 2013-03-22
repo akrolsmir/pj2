@@ -211,8 +211,9 @@ public class Board {
     		//iterating through both dimensions of the board
     		for(int i = 0; i < grid.length; i++) {
         		for(int j = 0; j < grid[0].length; j++) {
-        			if (isValid(color, new Move(i, j))) {
-        				validList.insertBack(new Move(i, j));
+        			Move m = new Move(i, j);
+        			if (isValid(color, m)) {
+        				validList.insertBack(m);
         			}
         		}
         	}

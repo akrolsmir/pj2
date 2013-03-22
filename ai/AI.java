@@ -23,7 +23,7 @@ public class AI {
 		for(Object pos : board.locationOfPieces(-color)){
 			connections -= board.connectedChips((int[]) pos).length();
 		}
-		System.out.println(board + " " + connections);
+//		System.out.println(board + " " + connections);
 		connections /= 2; //b/c doublecounted
 		connections /= 40; //scale down connections
 		return connections;
