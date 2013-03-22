@@ -1,13 +1,13 @@
                                      GRADER
 
-Name of student running submit:
-Login of student running submit:
+Name of student running submit: Austin Chen
+Login of student running submit: cs61b-ok
 
-Second team member's name:
-Second team member's login:
+Second team member's name: Alec Mouri
+Second team member's login: cs61b-ng
 
-Third team member's name (if any):
-Third team member's login:
+Third team member's name (if any): Michael Liu
+Third team member's login: cs61b-jy
 
 IMPORTANT:  Once you've submitted Project 2 once, the same team member should
 submit always.  If a different teammate must submit, inform cs61b@cory.eecs of
@@ -55,7 +55,7 @@ implemented the project.  Your description should include:
      
 Classes:
 	ai/
-		Helper.java
+		Board.java
 		AI.java
 	list/
 		List.java
@@ -64,94 +64,22 @@ Classes:
 		DListNode.java
 		InvalidNodeException.java
 Modules:
-	Determining whether a move is valid (Helper.java):
-    /**
-     * isValid() determines if a given move for a given player on a given board
-     * is valid.
-     * 
-     * @param color the turn of the current player (determined by color)
-     * @param move the proposed move
-     * @param board the current state of the board
-     * @return if the proposed move is valid
-     * 
-     * @author Alec Mouri
-     */
-    public static boolean isValid(int color, Move move, int[][] board)
+	Determining whether a move is valid (Board.java):
     
     
-	Generating a list of all valid moves (Helper.java):
-    /**
-     * allValidMoves() creates a list of all valid Moves for a given board and
-     * player.
-     * 
-     * @param color the turn of the current player (determined by color)
-     * @param board the current state of the board
-     * @return
-     * 
-     * @author Michael Liu
-     */
-    public static List allValidMoves(int color, int[][] board)
+	Generating a list of all valid moves (Board.java):
     
     
-	Finding the chips of the same color that share connections with a chip (Helper.java):
-    /**
-     * connectedChips() creates a list of all chips which are connected to a
-     * given chip on the board. Chips are represented by an int array of length
-     * 2, in the form of {x, y}. If there is no chip at that location, return
-     * an empty List.
-     * 
-     * @param chip the position of the chip to check for connections
-     * @param board the current state of the board
-     * @return a List of int arrays of chip positions
-     * 
-     * @author Austin Chen
-     */
-	public static List connectedChips(int[] chip, int[][] board)
+	Finding the chips of the same color that share connections with a chip (Board.java):
 	
 	
-	Determining whether a board state contains any networks:
-    /**
-     * hasNetwork() checks to see if a board contains a winning network for a
-     * given player.
-     * 
-     * @param color the turn of the current player (determined by color)
-     * @param board the current state of the board
-     * @return if there is a valid network
-     * 
-     * @author Alec Mouri
-     */
-    public static boolean hasNetwork(int color, int[][] board)
+	Determining whether a board state contains any networks (Board.java):
     
     
 	Computing an evaluation function for the board (AI.java):
-	/**
-	 * eval() analyzes the current board with respect to the current player 
-	 * for a given move returning a value between -1.0 and 1.0 signifying
-	 * the strength of the given move.
-	 * 
-	 * @param color the turn of the current player (determined by color)
-	 * @param board the current state of the board
-	 * @param depth the depth to which this checks
-	 * @return a double signifying the strength of a move
-	 * 
-	 * @author Alec Mouri, Austin Chen, Michael Liu
-	 */
-	public static double eval(int color, int[][]board, int depth)
 	
 	
 	Performing a minimax search (AI.java):
-	/**
-	 * bestMove() returns the strongest move for the given player using 
-	 * our evaluation function.
-	 * 
-	 * @param color the turn of the current player (determined by color)
-	 * @param board the current state of the board
-	 * @param depth the depth to which eval() checks
-	 * @return a move with the strongest score using our evaluation function
-	 * 
-	 * @author Michael Liu
-	 */
-	public static Move bestMove(int color, int[][]board, int depth)
 	
 	
      For each method, provide (1) a method prototype and (2) a complete,
