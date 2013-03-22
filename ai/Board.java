@@ -83,15 +83,7 @@ public class Board {
 	}
 	
 	public int numberChips(int color){
-		int total = 0;
-		for(int i = 0; i < grid.length; i++){
-			for(int j = 0; j < grid.length; j++){
-				if(grid[i][j] == color){
-					total++;
-				}
-			}
-		}
-		return total;
+		return locationOfPieces(color).length();
 	}
 
     /**
@@ -187,6 +179,9 @@ public class Board {
     			}
     		}
     	}
+		if(move.moveKind == Move.STEP){
+			grid[oldX][oldY] = color;
+		}
     	
     	//All rules are satisfied so return true
     	return true;
@@ -373,7 +368,6 @@ public class Board {
     	for(Object curr : pieces){
     		int[] c = (int[]) curr;
     		//disregard initial path that is not in goal area
-    		System.out.println(c[0]);
     		if((color == WHITE && c[0] % (grid.length - 1) == 0) || (color == BLACK && c[1] % (grid.length - 1) == 0)){
     			//memoized list
     			List network = new DList();
@@ -418,8 +412,6 @@ public class Board {
     		Direction newDir = getDirection(pos, c);
     		if (dir != newDir && !inNetwork(memo, c)){
     			memo.insertBack(c);
-    			for(int i = 1; i <= memo.length(); i++){
-    			}
     			if(hasNetworkHelper(memo, c, color, newDir)){
     				return true;
     			} else {
@@ -548,7 +540,7 @@ public class Board {
 //    	testValidMove();
 //    	testAllValidMoves();
 //   	testConnectedChips();
-    	testHasNetwork2();
+//    	testHasNetwork2();
     }
 
 }

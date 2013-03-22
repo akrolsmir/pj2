@@ -109,7 +109,6 @@ public class AI {
 		} else {
 			optimalMove[1] = beta;
 		}
-		
 		for(Object o : board.allValidMoves(color)) {
 			Move m = (Move) o;
 			board.makeMove(color, m);
@@ -171,16 +170,42 @@ public class AI {
 //		System.out.println(eval(Board.BLACK, board));
 //		testBestMove();
 		Board board = new Board();
-		board.grid[3][3] = Board.WHITE;
-		System.out.println(bestMove(Board.WHITE, board, 1));
-		board.grid[0][1] = Board.WHITE;
-		System.out.println(eval(Board.WHITE, board));
-		board.grid[0][1] = 0;
-		board.grid[5][4] = Board.WHITE;
-		System.out.println(eval(Board.WHITE, board));
-		board.grid[5][4] = 0;
-		board.grid[4][4] = Board.WHITE;
-		System.out.println(eval(Board.WHITE, board));
+		
+//		board.grid[3][3] = Board.WHITE;
+//		System.out.println(bestMove(Board.WHITE, board, 1));
+//		board.grid[0][1] = Board.WHITE;
+//		System.out.println(eval(Board.WHITE, board));
+//		board.grid[0][1] = 0;
+//		board.grid[5][4] = Board.WHITE;
+//		System.out.println(eval(Board.WHITE, board));
+//		board.grid[5][4] = 0;
+//		board.grid[4][4] = Board.WHITE;
+//		System.out.println(eval(Board.WHITE, board));
+		
+//		board.grid[1][1] = Board.WHITE;
+//		board.grid[1][5] = Board.WHITE;
+//		board.grid[3][3] = Board.WHITE;
+//		board.grid[3][5] = Board.WHITE;
+//		board.grid[3][6] = Board.WHITE;
+//		board.grid[4][1] = Board.WHITE;
+//		board.grid[5][3] = Board.WHITE;
+//		board.grid[5][5] = Board.WHITE;
+//		board.grid[6][3] = Board.WHITE;
+//		board.grid[6][6] = Board.WHITE;
+//		board.grid[1][3] = Board.BLACK;
+//		board.grid[1][6] = Board.BLACK;
+//		board.grid[2][1] = Board.BLACK;
+//		board.grid[2][4] = Board.BLACK;
+//		board.grid[4][0] = Board.BLACK;
+//		board.grid[4][2] = Board.BLACK;
+//		board.grid[4][6] = Board.BLACK;
+//		board.grid[5][2] = Board.BLACK;
+//		board.grid[5][4] = Board.BLACK;
+//		board.grid[6][4] = Board.BLACK;
+//		System.out.println(board);
+//		System.out.println(board.isValid(Board.WHITE, new Move(3, 1)));
+//		System.out.println(board.allValidMoves(Board.WHITE));
+//		System.out.println(bestMove(Board.WHITE, board, 1));
 	}
 
 }
