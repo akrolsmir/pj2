@@ -22,17 +22,23 @@ public class AI {
 		//	3. Size of largest network
 		//	4. Average distance between connections (smaller distances are more difficult to break)
 		//	5. Whether possible connections can be broken
-		//
+		//  6. Central Tendency
 		//In order of importance: Number of connections currently made > Number of possible moves > Size of largest Network
 		double connections = 0;
 		double possibleMoves = 0;
 		double ourNetworkLength = 0.0;
 		double opponentNetworkLength = 0.0;
 		double netLength = 0.0;
+		double averageDist = 0.0;
+		double central = 0.0;
 		
-		double connectionWeight = .5;
-		double possibleMovesWeight = .3;
+		double connectionWeight = .35;
+		double possibleMovesWeight = .25;
 		double longestNetworkWeight = .2;
+		double averageDistWeight = .2;
+		
+		
+		int[] curr;
 		
 		//Check for winning Network
 		if(board.hasNetwork(color)){
@@ -50,23 +56,35 @@ public class AI {
 		
 		//Number of current connections
 		for(Object pos : board.locationOfPieces(color)){
-			connections += board.connectedChips((int[]) pos).length();
+			curr = (int[]) pos;
+			connections += board.connectedChips(curr).length();
+			averageDist += board.averageChipDistance(curr);
 		}
 		for(Object pos : board.locationOfPieces(-color)){
-			connections -= board.connectedChips((int[]) pos).length();
+			curr = (int[]) pos;
+			connections -= board.connectedChips(curr).length();
+			averageDist -= board.averageChipDistance(curr);
 		}
 		
 		//Number of possible moves
 		possibleMoves = board.allValidMoves(color).length() - board.allValidMoves(-color).length();
 		
+		
 //		System.out.println(board + " " + connections);
 		connections /= 2; //b/c doublecounted
 		connections /= 40; //scale down connections
-		connections *= connectionWeight; //weight to .3
+		connections *= connectionWeight;
 		possibleMoves /= 48;
-		possibleMoves *= possibleMovesWeight; //weight to .2
+		possibleMoves *= possibleMovesWeight;
 		netLength /= 10;
-		netLength *= longestNetworkWeight; //weight to .5
+		netLength *= longestNetworkWeight;
+		averageDist /= 8;
+		if(averageDist > 0){
+			averageDist = 1 - averageDist;
+		} else {
+			averageDist = -1 - averageDist;
+		}
+		averageDist *= averageDistWeight;
 		return connections + possibleMoves + netLength;
 	}
 	

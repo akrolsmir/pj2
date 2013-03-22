@@ -107,11 +107,11 @@ public class Board {
     	int adjacent = 0;
     	
     	//If less than 10 moves in game, cannot make step moves. Otherwise cannot make add moves.
-    	if(move.moveKind == Move.STEP && numberChips(color) < 10 || move.moveKind == Move.ADD && numberChips(color) >= 10){
+    	if((move.moveKind == Move.STEP && numberChips(color) < 10) || (move.moveKind == Move.ADD && numberChips(color) >= 10)){
     		return false;
     	}
     	
-    	if(x % len  == 0 && y % len == 0){
+    	if(x % len == 0 && y % len == 0){
     		return false;
     	}
     	
@@ -179,10 +179,16 @@ public class Board {
     			}
     		}
     	}
+<<<<<<< HEAD
 		if(move.moveKind == Move.STEP){
 			grid[oldX][oldY] = color;
 		}
     	
+=======
+    	if(move.moveKind == Move.STEP){
+			grid[oldX][oldY] = color;
+		}
+>>>>>>> Fixed methods in Board.class and updated eval()
     	//All rules are satisfied so return true
     	return true;
     }
@@ -487,6 +493,16 @@ public class Board {
     	
     	//No possible connections found, return length of memoized list;
     	return pathLength;    	
+    }
+    
+    public float centrality(int color){
+    	int[] curr;
+    	int total = 0;
+    	for(Object o: locationOfPieces(color)){
+    		curr = (int[]) o;
+    		//total = total + Math.abs((grid.length - 1.0)/2.0 - )
+    	}
+    	return total;
     }
     
     private static void testHasNetwork() {
