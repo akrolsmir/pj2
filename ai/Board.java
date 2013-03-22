@@ -399,6 +399,8 @@ public class Board {
 	    	if(memo.length() >= 6 && ((color == WHITE && pos[0] % len == 0 && pos[0] != ((int[]) memo.front().item())[0]) 
 	    						   || (color == BLACK && pos[1] % len == 0 && pos[1] != ((int[]) memo.front().item())[1]))){
 	    		return true;
+	    	} else if ((color == WHITE && pos[0] % len == 0) || (color == BLACK && pos[1] % len == 0)){
+	    		return false;
 	    	}
     	} catch (InvalidNodeException e){
     		//do nothing

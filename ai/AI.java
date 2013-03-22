@@ -72,13 +72,13 @@ public class AI {
 		
 //		System.out.println(board + " " + connections);
 		connections /= 2; //b/c doublecounted
-		connections /= 40; //scale down connections
+		connections /= 15; //scale down connections
 		connections *= connectionWeight;
-		possibleMoves /= 48;
+		possibleMoves /= 20;
 		possibleMoves *= possibleMovesWeight;
-		netLength /= 10;
+		netLength /= 8;
 		netLength *= longestNetworkWeight;
-		averageDist /= 8;
+		averageDist /= 6;
 		if(averageDist > 0){
 			averageDist = 1 - averageDist;
 		} else {
@@ -119,6 +119,7 @@ public class AI {
 		
 		if(depth == 0) {
 			optimalMove[1] = eval(-color, board);
+			System.out.println(optimalMove[1]);
 			return optimalMove;
 		}
 		
@@ -130,7 +131,8 @@ public class AI {
 		for(Object o : board.allValidMoves(color)) {
 			Move m = (Move) o;
 			board.makeMove(color, m);
-			
+			System.out.print(m.x1 + " " + m.y1);
+			System.out.print("--");
 			replyMove = bestMoveHelper(-color, AIcolor, board, depth - 1,
 					alpha, beta); 
 			Double heuristic = (Double) replyMove[1];
