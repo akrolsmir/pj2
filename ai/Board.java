@@ -43,9 +43,9 @@ public class Board {
 	    	chipList.insertBack(new int[]{move.x1, move.y1});
 	    	break;
 	    case Move.STEP:
-	    	grid[move.x1][move.x1] = EMPTY;
-	    	grid[move.x2][move.x2] = color; 
-	    	chipList.insertBack(new int[]{move.x2, move.y2});
+	    	grid[move.x1][move.y1] = color;
+	    	grid[move.x2][move.y2] = EMPTY; 
+	    	chipList.insertBack(new int[]{move.x1, move.y1});
 	    	break;
 	    }
 	    return true;
