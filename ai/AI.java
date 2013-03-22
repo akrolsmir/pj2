@@ -88,20 +88,33 @@ public class AI {
 		return connections + possibleMoves + netLength;
 	}
 	
+	/**
+	 * bestMove() returns the strongest possible Move using our evaluation
+	 * function
+	 * 
+	 * @param color the turn of the current player (determined by color)
+	 * @param board the current state of the board
+	 * @param depth the depth to which eval() checks
+	 * @return an Object containing the strongest move and its corresponding strength
+	 * 
+	 * @author Michael Liu
+	 */
 	public static Move bestMove(int color, Board board, int depth) {
 		return (Move) bestMoveHelper(color, color, board, depth, -1.0, 1.0)[0];
 	}
 	
+
 	/**
-	 * bestMove() returns an Object containing the strongest move for the given player 
-	 * using our evaluation function along with the strength of the given move.
+	 * bestMoveHelper() returns an Object[] containing the strongest move for
+	 * the given player using our evaluation function along with the strength
+	 * of the given move. It employs alpha-beta pruning.
 	 * 
 	 * @param color the turn of the current player (determined by color)
 	 * @param board the current state of the board
 	 * @param depth the depth to which eval() checks
 	 * @param alpha
 	 * @param beta
-	 * @return an Object containing the strongest move and its corresponding strength
+	 * @return an Object[] containing the strongest move and its corresponding strength
 	 * 
 	 * @author Michael Liu
 	 */
@@ -168,6 +181,90 @@ public class AI {
 		System.out.println(bestMove(Board.WHITE, board, 1));
 		board.makeMove(Board.WHITE, bestMove(Board.WHITE, board, 1));
 		System.out.println(board);
+		
+	}
+	
+	private static void testBestMove2(){
+		Board board = new Board();
+		board.grid[6][0] = Board.BLACK;
+		board.grid[6][5] = Board.BLACK;
+		board.grid[3][3] = Board.BLACK;
+		board.grid[3][5] = Board.BLACK;
+		board.grid[5][7] = Board.BLACK;
+		board.grid[5][5] = Board.BLACK;
+		System.out.println(board);
+//		System.out.println(board.allValidMoves(Board.BLACK));
+		System.out.println(AI.eval(Board.BLACK, board));
+		System.out.println(bestMove(Board.BLACK, board, 1) + ", should be 55"); //55 wins
+		System.out.println(bestMove(Board.BLACK, board, 1) + ", should be 55"); //55 blocks
+		
+	}
+	
+	private static void testHasNetwork2(){
+		Board board = new Board();
+		board.grid[6][0] = Board.BLACK;
+		board.grid[6][5] = Board.BLACK;
+		board.grid[5][5] = Board.BLACK;
+		board.grid[3][3] = Board.BLACK;
+		board.grid[3][5] = Board.BLACK;
+		board.grid[5][7] = Board.BLACK;
+		System.out.println("passed test? " + (board.hasNetwork(Board.BLACK) == true));
+//		System.out.println(board);
+		board = new Board();
+
+		board.grid[2][0] = Board.BLACK;
+		board.grid[2][5] = Board.BLACK;
+		board.grid[3][5] = Board.BLACK;
+		board.grid[1][3] = Board.BLACK;
+		board.grid[3][3] = Board.BLACK;
+		board.grid[5][5] = Board.BLACK;
+		board.grid[5][7] = Board.BLACK;
+		System.out.println("passed test? " + (board.hasNetwork(Board.BLACK) == true));
+//		System.out.println(board);
+		board = new Board();
+
+//		not win
+
+		board.grid[6][0] = Board.BLACK;
+		board.grid[2][0] = Board.BLACK;
+		board.grid[4][2] = Board.BLACK;
+		board.grid[3][3] = Board.BLACK;
+		board.grid[3][5] = Board.BLACK;
+		board.grid[5][7] = Board.BLACK;
+		System.out.println("passed test? " + (board.hasNetwork(Board.BLACK) == false));
+		System.out.println(board);
+		
+		board = new Board();
+		board.grid[2][0] = Board.BLACK;
+		board.grid[4][2] = Board.BLACK;
+		board.grid[6][0] = Board.BLACK;
+		board.grid[6][5] = Board.BLACK;
+		board.grid[5][5] = Board.BLACK;
+		board.grid[5][7] = Board.BLACK;
+		System.out.println("passed test? " + (board.hasNetwork(Board.BLACK) == false));
+		System.out.println(board);
+		
+		board = new Board();
+		board.grid[2][0] = Board.BLACK;
+		board.grid[2][5] = Board.BLACK;
+		board.grid[3][5] = Board.BLACK;
+		board.grid[3][3] = Board.BLACK;
+		board.grid[5][5] = Board.BLACK;
+		board.grid[3][5] = Board.BLACK;
+		board.grid[5][6] = Board.WHITE;
+		board.grid[5][7] = Board.BLACK;
+		System.out.println("passed test? " + (board.hasNetwork(Board.BLACK) == false));
+//		System.out.println(board);
+		
+		board = new Board();
+		board.grid[6][0] = Board.BLACK;
+		board.grid[4][2] = Board.BLACK;
+		board.grid[3][3] = Board.BLACK;
+		board.grid[3][5] = Board.BLACK;
+		board.grid[2][5] = Board.BLACK;
+		board.grid[2][7] = Board.BLACK;
+		System.out.println("passed test? " + (board.hasNetwork(Board.BLACK) == false));
+//		System.out.println(board);
 	}
 	
 	/**
@@ -187,55 +284,20 @@ public class AI {
 //		System.out.println(eval(Board.BLACK, board));
 //		testBestMove();
 		Board board = new Board();
-		
-//		board.grid[3][3] = Board.WHITE;
-//		System.out.println(bestMove(Board.WHITE, board, 1));
-//		board.grid[0][1] = Board.WHITE;
-//		System.out.println(eval(Board.WHITE, board));
-//		board.grid[0][1] = 0;
-//		board.grid[5][4] = Board.WHITE;
-//		System.out.println(eval(Board.WHITE, board));
-//		board.grid[5][4] = 0;
-//		board.grid[4][4] = Board.WHITE;
-//		System.out.println(eval(Board.WHITE, board));
-		
-//		board.grid[1][1] = Board.WHITE;
-//		board.grid[1][5] = Board.WHITE;
-//		board.grid[3][3] = Board.WHITE;
-//		board.grid[3][5] = Board.WHITE;
-//		board.grid[3][6] = Board.WHITE;
-//		board.grid[4][1] = Board.WHITE;
-//		board.grid[5][3] = Board.WHITE;
-//		board.grid[5][5] = Board.WHITE;
-//		board.grid[6][3] = Board.WHITE;
-//		board.grid[6][6] = Board.WHITE;
-//		board.grid[1][3] = Board.BLACK;
-//		board.grid[1][6] = Board.BLACK;
-//		board.grid[2][1] = Board.BLACK;
-//		board.grid[2][4] = Board.BLACK;
-//		board.grid[4][0] = Board.BLACK;
-//		board.grid[4][2] = Board.BLACK;
-//		board.grid[4][6] = Board.BLACK;
-//		board.grid[5][2] = Board.BLACK;
-//		board.grid[5][4] = Board.BLACK;
-//		board.grid[6][4] = Board.BLACK;
-//		System.out.println(board);
-//		System.out.println(board.isValid(Board.WHITE, new Move(3, 1)));
-//		System.out.println(board.allValidMoves(Board.WHITE));
-//		System.out.println(bestMove(Board.WHITE, board, 1));
-		
-//		Board board = new Board();
-		board.grid[6][0] = Board.BLACK;
-		board.grid[6][5] = Board.BLACK;
-		board.grid[3][3] = Board.BLACK;
-		board.grid[3][5] = Board.BLACK;
-		board.grid[5][7] = Board.BLACK;
-		board.grid[5][5] = Board.BLACK;
-//		board.grid[3][0] = Board.BLACK;
-		System.out.println(eval(Board.BLACK, board));
-		System.out.println(bestMove(Board.BLACK, board, 1));
-		System.out.println(board);
-
+		board.grid[3][3] = Board.WHITE;
+		System.out.println(bestMove(Board.WHITE, board, 1));
+		board.grid[0][1] = Board.WHITE;
+		System.out.println(eval(Board.WHITE, board));
+		board.grid[0][1] = 0;
+		board.grid[5][4] = Board.WHITE;
+		System.out.println(eval(Board.WHITE, board));
+		board.grid[5][4] = 0;
+		board.grid[4][4] = Board.WHITE;
+		System.out.println(eval(Board.WHITE, board));
+		testBestMove2();
+		testHasNetwork2();
 	}
+	
+	
 
 }
