@@ -179,9 +179,10 @@ public class Board {
     			}
     		}
     	}
-    	if(move.moveKind == Move.STEP){
+		if(move.moveKind == Move.STEP){
 			grid[oldX][oldY] = color;
 		}
+
     	//All rules are satisfied so return true
     	return true;
     }
