@@ -156,23 +156,7 @@ public class AI {
 					alpha, beta); 
 			Double heuristic = (Double) replyMove[1];
 			
-//			for(int i = depth; i < nom; i++){
-//				System.out.print("--");
-//			}
-//			System.out.println(m.x1 + " " + m.y1 + " " + alpha + " " + beta + " " + 
-//					((Move)optimalMove[0]).x1 +  " " + ((Move) optimalMove[0]).y1 + " " +
-//					(Double) optimalMove[1] + " " + heuristic);
-			
-//			if(color == AIcolor){
-//				System.out.println(((Move)optimalMove[0]).x1 + " " + ((Move) optimalMove[0]).y1 
-//					+ " " + (Double) optimalMove[1] + " " + heuristic);
-//			}
-			
-			board.grid[m.x1][m.y1] = 0;
-			if (m.moveKind == Move.STEP) {
-				Move y = new Move(m.x2, m.y2);
-				board.makeMove(color, y);
-			}
+			board.unmakeMove(color, m);
 			
 			if (color == AIcolor && (Double) optimalMove[1] <= heuristic) {
 				optimalMove[0] = m;
@@ -253,7 +237,7 @@ public class AI {
 		board.grid[3][5] = Board.BLACK;
 		board.grid[5][7] = Board.BLACK;
 		System.out.println("passed test? " + (board.hasNetwork(Board.BLACK) == false));
-		System.out.println(board);
+//		System.out.println(board);
 		
 		board = new Board();
 		board.grid[2][0] = Board.BLACK;
@@ -263,7 +247,7 @@ public class AI {
 		board.grid[5][5] = Board.BLACK;
 		board.grid[5][7] = Board.BLACK;
 		System.out.println("passed test? " + (board.hasNetwork(Board.BLACK) == false));
-		System.out.println(board);
+//		System.out.println(board);
 		
 		board = new Board();
 		board.grid[2][0] = Board.BLACK;

@@ -15,7 +15,7 @@ public class Board {
 		N, E, S, W, NE, SE, SW, NW, NONE
 	}
 	
-//	private List blackChips = new DList(), whiteChips = new DList();
+	private List blackChips, whiteChips;
 	
 	int[][] grid;
 	
@@ -26,8 +26,6 @@ public class Board {
 	public Board(int[][] init){
 		grid = init;
 	}
-	
-	
 	
 	/**
 	 * makeMove() tries to make the given move on this board.
@@ -42,19 +40,32 @@ public class Board {
 	    if(!isValid(color, move)){
 	    	return false;
 	    }
-//	    List chipList = color == BLACK ? blackChips : whiteChips;
-	    switch(move.moveKind){
-	    case Move.ADD:
-	    	grid[move.x1][move.y1] = color;
-//	    	chipList.insertBack(new int[]{move.x1, move.y1});
-	    	break;
-	    case Move.STEP:
-	    	grid[move.x1][move.y1] = color;
-	    	grid[move.x2][move.y2] = EMPTY; 
-//	    	chipList.insertBack(new int[]{move.x1, move.y1});
-	    	break;
-	    }
+	    
+		makeMoveHelper(color, EMPTY, move);
 	    return true;
+	}
+	
+	/**
+	 * unmakeMove() does the opposite of the given move on this board.
+	 * It presupposes that this is a valid action.
+	 * 
+	 * @param color the turn of the current player (determined by color)
+	 * @param move the proposed move
+	 * 
+	 * @author Austin Chen
+	 */
+	public void unmakeMove(int color, Move move){
+		makeMoveHelper(EMPTY, color, move);
+	}
+	
+	private void makeMoveHelper(int color1, int color2, Move move){
+		grid[move.x1][move.y1] = color1; 
+		if (move.moveKind == Move.STEP) {
+			grid[move.x2][move.y2] = color2;
+		}
+		
+	    blackChips = null;
+	    whiteChips = null;
 	}
 	
 	@Override
@@ -234,6 +245,13 @@ public class Board {
     }
 
     public List locationOfPieces(int color) {
+    	// If the list was already calculated, use that.
+		List rightList = color == WHITE ? whiteChips : blackChips;
+		if (rightList != null) {
+			return rightList;
+		}
+    	
+		// Otherwise, calculate the list and save it.
     	DList listed = new DList();
     	for (int x = 0; x < grid.length; x++) {
     		for (int y = 0; y < grid[0].length; y++) {
@@ -242,9 +260,14 @@ public class Board {
     			}
     		}
     	}
-    	return listed;
     	
-    	//return color == BLACK ? blackChips : whiteChips;
+		if (color == WHITE) {
+			whiteChips = listed;
+		}
+		else {
+			blackChips = listed;
+		}
+    	return listed;
     }
     
     /**
@@ -258,8 +281,9 @@ public class Board {
      */
     public List allValidMoves(int color) {
     	DList validList = new DList();
+    	List pieces = locationOfPieces(color);
     	//differentiates adding and moving pieces
-    	if (locationOfPieces(color).length() <= 9) {
+    	if (pieces.length() <= 9) {
     		//iterating through both dimensions of the board
     		for(int i = 0; i < grid.length; i++) {
         		for(int j = 0; j < grid[0].length; j++) {
@@ -270,7 +294,7 @@ public class Board {
         		}
         	}
     	} else {
-    		for(Object o : locationOfPieces(color)) {
+    		for(Object o : pieces) {
     			for(int i = 0; i < grid.length; i++) {
             		for(int j = 0; j < grid[0].length; j++) {
             			Move m = new Move(i, j, ((int[])o)[0], ((int[])o)[1]);
