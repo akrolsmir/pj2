@@ -138,12 +138,9 @@ public class AI {
 		Object[] replyMove;
 		
 		if(depth == 0) {
-<<<<<<< HEAD
 			optimalMove[1] = eval(-color, board);
-=======
 			optimalMove[1] = eval(AIcolor, board);
 			//System.out.println(optimalMove[1]);
->>>>>>> Updated AI to correctly work on depth 2
 			return optimalMove;
 		}
 		
