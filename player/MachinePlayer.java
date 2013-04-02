@@ -36,8 +36,10 @@ public class MachinePlayer extends Player {
   // Returns a new move by "this" player.  Internally records the move (updates
   // the internal game board) as a move by "this" player.
   public Move chooseMove() {
+	long start = System.currentTimeMillis();
     Move move = AI.bestMove(color, board, searchDepth);
     board.makeMove(color, move);
+    System.out.println("chooseMove took: " + (System.currentTimeMillis() - start) + " ms");
     return move;
   } 
 
