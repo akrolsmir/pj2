@@ -4,6 +4,8 @@ import player.Move;
 
 public class AI {
 	
+	static final int nom = 2;
+	
 	/**
 	 * eval() analyzes the current board with respect to the current player 
 	 * for a given move returning a value between -1.0 and 1.0 signifying
@@ -32,20 +34,21 @@ public class AI {
 		double averageDist = 0.0;
 		double central = 0.0;
 		
-		double connectionWeight = .35;
-		double possibleMovesWeight = .25;
-		double longestNetworkWeight = .2;
-		double averageDistWeight = .2;
+		double connectionWeight = .40;
+		double possibleMovesWeight = .35;
+		double longestNetworkWeight = .15;
+		double centralWeight = .10;
+//		double averageDistWeight = .05;
 		
 		
 		int[] curr;
 		
 		//Check for winning Network
 		if(board.hasNetwork(color)){
-			return 1;
+			return Double.MAX_VALUE;
 		}
 		if(board.hasNetwork(-color)){
-			return -1;
+			return -Double.MAX_VALUE;
 		}
 
 		
@@ -58,12 +61,14 @@ public class AI {
 		for(Object pos : board.locationOfPieces(color)){
 			curr = (int[]) pos;
 			connections += board.connectedChips(curr).length();
-			averageDist += board.averageChipDistance(curr);
+			central = central + (Math.abs(curr[0] - 3.5) + Math.abs(curr[1] - 3.5)) / 2;
+//			averageDist += board.averageChipDistance(curr);
 		}
 		for(Object pos : board.locationOfPieces(-color)){
 			curr = (int[]) pos;
 			connections -= board.connectedChips(curr).length();
-			averageDist -= board.averageChipDistance(curr);
+			central = central - (Math.abs(curr[0] - 3.5) + Math.abs(curr[1] - 3.5)) / 2;
+//			averageDist -= board.averageChipDistance(curr);
 		}
 		
 		//Number of possible moves
@@ -72,20 +77,22 @@ public class AI {
 		
 //		System.out.println(board + " " + connections);
 		connections /= 2; //b/c doublecounted
-		connections /= 15; //scale down connections
+		connections /= 40; //scale down connections
 		connections *= connectionWeight;
-		possibleMoves /= 20;
+		possibleMoves /= 40;
 		possibleMoves *= possibleMovesWeight;
-		netLength /= 8;
+		netLength /= 6;
 		netLength *= longestNetworkWeight;
-		averageDist /= 6;
-		if(averageDist > 0){
-			averageDist = 1 - averageDist;
-		} else {
-			averageDist = -1 - averageDist;
-		}
-		averageDist *= averageDistWeight;
-		return connections + possibleMoves + netLength;
+		central = central / (board.locationOfPieces(color).length() + board.locationOfPieces(-color).length());
+		central *= centralWeight;
+
+//		averageDist /= 4;
+//		if(averageDist < 1){
+//			averageDist = -1;
+//		}
+//		averageDist *= averageDistWeight;
+	
+		return connections + possibleMoves + netLength + central;
 	}
 	
 	/**
@@ -100,7 +107,7 @@ public class AI {
 	 * @author Michael Liu
 	 */
 	public static Move bestMove(int color, Board board, int depth) {
-		return (Move) bestMoveHelper(color, color, board, depth, -1.0, 1.0)[0];
+		return (Move) bestMoveHelper(color, color, board, depth, -Double.MAX_VALUE, Double.MAX_VALUE)[0];
 	}
 	
 
@@ -131,7 +138,12 @@ public class AI {
 		Object[] replyMove;
 		
 		if(depth == 0) {
+<<<<<<< HEAD
 			optimalMove[1] = eval(-color, board);
+=======
+			optimalMove[1] = eval(AIcolor, board);
+			//System.out.println(optimalMove[1]);
+>>>>>>> Updated AI to correctly work on depth 2
 			return optimalMove;
 		}
 		
@@ -146,6 +158,18 @@ public class AI {
 			replyMove = bestMoveHelper(-color, AIcolor, board, depth - 1,
 					alpha, beta); 
 			Double heuristic = (Double) replyMove[1];
+			
+//			for(int i = depth; i < nom; i++){
+//				System.out.print("--");
+//			}
+//			System.out.println(m.x1 + " " + m.y1 + " " + alpha + " " + beta + " " + 
+//					((Move)optimalMove[0]).x1 +  " " + ((Move) optimalMove[0]).y1 + " " +
+//					(Double) optimalMove[1] + " " + heuristic);
+			
+//			if(color == AIcolor){
+//				System.out.println(((Move)optimalMove[0]).x1 + " " + ((Move) optimalMove[0]).y1 
+//					+ " " + (Double) optimalMove[1] + " " + heuristic);
+//			}
 			
 			board.grid[m.x1][m.y1] = 0;
 			if (m.moveKind == Move.STEP) {

@@ -516,12 +516,12 @@ public class Board {
     
     private static void testHasNetwork2(){
         Board board = new Board();
-        board.grid[6][0] = Board.BLACK;
-        board.grid[6][5] = Board.BLACK;
+        board.grid[6][3] = Board.BLACK;
+        board.grid[5][5] = Board.BLACK;
         board.grid[3][3] = Board.BLACK;
         board.grid[3][5] = Board.BLACK;
         board.grid[5][7] = Board.BLACK;
-        board.grid[5][5] = Board.BLACK;
+        board.grid[3][0] = Board.BLACK;
         System.out.println(board);
         System.out.println("Network detected: " + board.hasNetwork(BLACK));
         
