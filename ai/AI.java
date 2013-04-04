@@ -138,16 +138,15 @@ public class AI {
 		Object[] replyMove;
 		
 		if(depth == 0) {
-			optimalMove[1] = eval(-color, board);
 			optimalMove[1] = eval(AIcolor, board);
 			//System.out.println(optimalMove[1]);
 			return optimalMove;
 		}
 		
 		if (color == AIcolor) {
-			optimalMove[1] = alpha;
+			optimalMove[1] = -Double.MAX_VALUE;
 		} else {
-			optimalMove[1] = beta;
+			optimalMove[1] = Double.MAX_VALUE;
 		}
 		for(Object o : board.allValidMoves(color)) {
 			Move m = (Move) o;
@@ -155,7 +154,6 @@ public class AI {
 			replyMove = bestMoveHelper(-color, AIcolor, board, depth - 1,
 					alpha, beta); 
 			Double heuristic = (Double) replyMove[1];
-			
 			board.unmakeMove(color, m);
 			
 			if (color == AIcolor && (Double) optimalMove[1] <= heuristic) {
@@ -168,7 +166,7 @@ public class AI {
 				beta = heuristic;
 			}
 			
-			if (beta <= alpha) {
+			if (beta < alpha) {
 				break;
 			}
 		}
@@ -290,18 +288,30 @@ public class AI {
 //		testBestMove();
 		Board board = new Board();
 		board.grid[3][3] = Board.WHITE;
-		System.out.println(bestMove(Board.WHITE, board, 1));
-		board.grid[0][1] = Board.WHITE;
+//		System.out.println(bestMove(Board.WHITE, board, 1));
+		board.grid[7][6] = Board.WHITE;
+//		System.out.println(eval(Board.WHITE, board));
+//		board.grid[0][1] = 0;
+		board.grid[7][3] = Board.WHITE;
+//		System.out.println(eval(Board.WHITE, board));
+//		board.grid[5][4] = 0;
+		board.grid[6][1] = Board.WHITE;
+//		System.out.println(eval(Board.WHITE, board));
+//		testBestMove2();
+//		testHasNetwork2();
+		board.grid[2][1] = Board.WHITE;
+		board.grid[4][4] = Board.BLACK;
+		board.grid[4][2] = Board.BLACK;
+		board.grid[2][2] = Board.BLACK;
+		board.grid[2][4] = Board.BLACK;
+		board.grid[4][0] = Board.BLACK;
+		board.grid[1][7] = Board.BLACK;
+		board.grid[5][2] = Board.WHITE;
+//		System.out.println(board.hasNetwork(board.BLACK));
+//		System.out.println(board);
 		System.out.println(eval(Board.WHITE, board));
-		board.grid[0][1] = 0;
-		board.grid[5][4] = Board.WHITE;
-		System.out.println(eval(Board.WHITE, board));
-		board.grid[5][4] = 0;
-		board.grid[4][4] = Board.WHITE;
-		System.out.println(eval(Board.WHITE, board));
-		testBestMove2();
-		testHasNetwork2();
-	}
+//		System.out.println(bestMove(Board.WHITE, board, 2));
+		}
 	
 	
 
