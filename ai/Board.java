@@ -454,17 +454,6 @@ public class Board {
     	//No possible connections found, return length of memoized list;
     	return pathLength;    	
     }
-    
-//    public float centrality(int color){
-//    	int[] curr;
-//    	int total = 0;
-//    	for(Object o: locationOfPieces(color)){
-//    		curr = (int[]) o;
-//    		//total = total + Math.abs((grid.length - 1.0)/2.0 - )
-//    	}
-//    	return total;
-//    }
-
 
 }
 

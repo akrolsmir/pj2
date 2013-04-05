@@ -31,14 +31,12 @@ public class AI {
 		double ourNetworkLength = 0.0;
 		double opponentNetworkLength = 0.0;
 		double netLength = 0.0;
-		double averageDist = 0.0;
 		double central = 0.0;
 		
 		double connectionWeight = .40;
 		double possibleMovesWeight = .35;
 		double longestNetworkWeight = .15;
 		double centralWeight = .10;
-//		double averageDistWeight = .05;
 		
 		
 		int[] curr;
@@ -62,20 +60,17 @@ public class AI {
 			curr = (int[]) pos;
 			connections += board.connectedChips(curr).length();
 			central = central + (Math.abs(curr[0] - 3.5) + Math.abs(curr[1] - 3.5)) / 2;
-//			averageDist += board.averageChipDistance(curr);
 		}
 		for(Object pos : board.locationOfPieces(-color)){
 			curr = (int[]) pos;
 			connections -= board.connectedChips(curr).length();
 			central = central - (Math.abs(curr[0] - 3.5) + Math.abs(curr[1] - 3.5)) / 2;
-//			averageDist -= board.averageChipDistance(curr);
 		}
 		
 		//Number of possible moves
 		possibleMoves = board.allValidMoves(color).length() - board.allValidMoves(-color).length();
 		
 		
-//		System.out.println(board + " " + connections);
 		connections /= 2; //b/c doublecounted
 		connections /= 40; //scale down connections
 		connections *= connectionWeight;
@@ -85,12 +80,6 @@ public class AI {
 		netLength *= longestNetworkWeight;
 		central = central / (board.locationOfPieces(color).length() + board.locationOfPieces(-color).length());
 		central *= centralWeight;
-
-//		averageDist /= 4;
-//		if(averageDist < 1){
-//			averageDist = -1;
-//		}
-//		averageDist *= averageDistWeight;
 	
 		return connections + possibleMoves + netLength + central;
 	}
@@ -139,7 +128,6 @@ public class AI {
 		
 		if(depth == 0 || board.hasNetwork(AIcolor) || board.hasNetwork(-AIcolor)) {
 			optimalMove[1] = eval(AIcolor, board);
-			//System.out.println(optimalMove[1]);
 			return optimalMove;
 		}
 		
