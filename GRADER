@@ -80,7 +80,7 @@ Modules:
 	Determining whether a board state contains any networks (Board.java):
     
     
-	Computing an evaluation function for the board (AI.java):
+	Computing an evaluation function for the board (Board.java):
 	
 	
 	Performing a minimax search (AI.java):

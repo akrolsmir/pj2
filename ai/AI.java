@@ -121,6 +121,7 @@ public class AI {
    */
   private static Object[] bestMoveHelper(int color, int AIcolor, Board board,
       int depth, double alpha, double beta) {
+    
     if (board.locationOfPieces(AIcolor).length() == 0) {
       if (board.isValid(AIcolor, new Move(3, 3))) {
         return new Object[] { new Move(3, 3), 0.0 };

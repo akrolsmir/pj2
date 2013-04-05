@@ -9,6 +9,7 @@ import player.Move;
 public class Board {
 
   public final static int BLACK = -1, EMPTY = 0, WHITE = 1;
+  public final static int DEFAULT_BOARD_SIZE = 8;
 
   private enum Direction {
     N, E, S, W, NE, SE, SW, NW, NONE
@@ -19,7 +20,7 @@ public class Board {
   public int[][] grid;
 
   public Board() {
-    grid = new int[8][8];
+    grid = new int[DEFAULT_BOARD_SIZE][DEFAULT_BOARD_SIZE];
   }
 
   public Board(int[][] init) {
@@ -57,12 +58,21 @@ public class Board {
     makeMoveHelper(EMPTY, color, move);
   }
 
+  /**
+   * makeMoveHelper() sets the board to color1 at x1, y1 of move. If move is a
+   * STEP, it also sets the board to color2 at x2, y2.
+   * 
+   * @param color1 first color to set
+   * @param color2 second color to set, if move is a STEP
+   * @param move the proposed move
+   */
   private void makeMoveHelper(int color1, int color2, Move move) {
     grid[move.x1][move.y1] = color1;
     if (move.moveKind == Move.STEP) {
       grid[move.x2][move.y2] = color2;
     }
 
+    // Reset the memoized lists. These will be recalculated when needed.
     blackChips = null;
     whiteChips = null;
   }
@@ -90,10 +100,6 @@ public class Board {
       }
     }
     return result.toString();
-  }
-
-  public int numberChips(int color) {
-    return locationOfPieces(color).length();
   }
 
   /**
@@ -195,6 +201,10 @@ public class Board {
 
     //All rules are satisfied so return true
     return true;
+  }
+  
+  private int numberChips(int color) {
+    return locationOfPieces(color).length();
   }
 
   /**
