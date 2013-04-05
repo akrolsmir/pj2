@@ -67,25 +67,88 @@ Classes:
 		DList.java
 		DListNode.java
 		InvalidNodeException.java
+		
 Modules:
-	Determining whether a move is valid (Board.java):
+Determining whether a move is valid (Board.java):
+  /**
+   * isValid() determines if a given move for a given player on this board
+   * is valid.
+   * 
+   * @param color the turn of the current player (determined by color)
+   * @param move the proposed move
+   * @return if the proposed move is valid
+   * 
+   * @author Alec Mouri
+   */
+  public boolean isValid(int color, Move move)
     
-    
-	Generating a list of all valid moves (Board.java):
-    
-    
-	Finding the chips of the same color that share connections with a chip (Board.java):
+Generating a list of all valid moves (Board.java):
+  /**
+   * allValidMoves() creates a list of all valid Moves for a given board and
+   * player.
+   * 
+   * @param color the turn of the current player (determined by color)
+   * @return
+   * 
+   * @author Michael Liu
+   */
+  public List allValidMoves(int color)
+  
+Finding the chips of the same color that share connections with a chip (Board.java):
+  /**
+   * connectedChips() creates a list of all chips which are connected to a
+   * given chip on the board. Chips are represented by an int array of length
+   * 2, in the form of {x, y}. If there is no chip at that location, return
+   * an empty List.
+   * 
+   * @param chip the position of the chip to check for connections
+   * @return a List of int arrays of chip positions
+   * 
+   * @author Austin Chen
+   */
+  public List connectedChips(int[] chip)
 	
-	
-	Determining whether a board state contains any networks (Board.java):
-    
-    
-	Computing an evaluation function for the board (Board.java):
-	
-	
-	Performing a minimax search (AI.java):
-	
-	
+Determining whether a board state contains any networks (Board.java):
+  /**
+   * hasNetwork() checks to see if a board contains a winning network for a
+   * given player.
+   * 
+   * @param color the turn of the current player (determined by color)
+   * @param board the current state of the board
+   * @return if there is a valid network
+   * 
+   * @author Alec Mouri
+   */
+  public boolean hasNetwork(int color)
+  
+Computing an evaluation function for the board (AI.java):
+  /**
+   * eval() analyzes the current board with respect to the current player 
+   * for a given move returning a value between -Double.MAX_VALUE and Double.MAX_VALUE signifying
+   * the strength of the given move.
+   * 
+   * @param color the turn of the current player (determined by color)
+   * @param board the current state of the board
+   * @return a double signifying the strength of a move
+   * 
+   * @author Alec Mouri, Austin Chen, Michael Liu
+   */
+  public static double eval(int color, Board board)
+  
+Performing a minimax search (AI.java):
+  /**
+   * bestMove() returns the strongest possible Move using our evaluation
+   * function
+   * 
+   * @param color the turn of the current player (determined by color)
+   * @param board the current state of the board
+   * @param depth the depth to which eval() checks
+   * @return an Object containing the strongest move and its corresponding strength
+   * 
+   * @author Michael Liu
+   */
+  public static Move bestMove(int color, Board board, int depth)
+  
      For each method, provide (1) a method prototype and (2) a complete,
      unambiguous description of the behavior of the method/module.  This
      description should also appear before the method in your code's comments.
