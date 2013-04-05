@@ -314,18 +314,6 @@ public List locationOfPieces(int color) {
     return x >= 0 && x < grid.length && y >= 0 && y < grid[0].length;
   }
 
-  public float averageChipDistance(int[] chip) {
-    List chips = connectedChips(chip);
-    int[] curr;
-    float totalDistance = 0;
-    for (Object o : chips) {
-      curr = (int[]) o;
-      totalDistance += Math.max(Math.abs(curr[0] - chip[0]),
-          Math.abs(curr[1] - chip[1]));
-    }
-    return totalDistance / chips.length();
-  }
-
   /**
    * hasNetwork() checks to see if a board contains a winning network for a
    * given player.
@@ -363,7 +351,9 @@ public List locationOfPieces(int color) {
    * @param color the color of the network we are detecting the network for
    * @param board the current state of the board
    * @param dir the previous direction that was searched for
-   * @return
+   * @return whether a network of a color exists that starts from pos
+   * 
+   * @author Alec Mouri
    */
   private boolean hasNetworkHelper(List memo, int[] pos, int color,
       Direction dir) {
@@ -410,6 +400,15 @@ public List locationOfPieces(int color) {
     return false;
   }
 
+  /**
+   * Helper function for hasNetworkHelper() for determining the direction that the path takes when going from
+   * one point to another.
+   * @param pos A starting point on the path.
+   * @param newPos An ending point on the path
+   * @return A direction that corresponds to the direction of the path from pos to newPos
+   * 
+   * @author Alec Mouri
+   */
   private static Direction getDirection(int[] pos, int[] newPos) {
     if (pos[0] > newPos[0] && pos[1] < newPos[1]) {
       return Direction.SW;
@@ -446,7 +445,14 @@ public List locationOfPieces(int color) {
     }
     return false;
   }
-
+  
+  /**
+   * Utility function for finding the longest path length for a given color. Used by AI.
+   * @param color
+   * @return length of the longest path for a given color on the board.
+   * 
+   * @author Alec Mouri
+   */
   public int longestPathLength(int color) {
     int length = 0;
     List pieces = locationOfPieces(color);
@@ -460,6 +466,17 @@ public List locationOfPieces(int color) {
     return length;
   }
 
+  /**
+   * Helper function for longestPathLength() that finds all possible paths from a piece and
+   * returns the maximum length of those paths.
+   * @param memo A list of pieces that grows as the function is repeatedly called
+   * @param pos The piece that we are considering
+   * @param color The color of the piece
+   * @param dir The direction from which we arrived at the piece
+   * @return The longest path length that has pos as its root
+   * 
+   * @author Alec Mouri
+   */
   private int longestPathLengthHelper(List memo, int[] pos, int color,
       Direction dir) {
     int pathLength = memo.length();

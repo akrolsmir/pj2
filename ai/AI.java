@@ -4,11 +4,9 @@ import player.Move;
 
 public class AI {
 
-  static final int nom = 2;
-
   /**
    * eval() analyzes the current board with respect to the current player 
-   * for a given move returning a value between -1.0 and 1.0 signifying
+   * for a given move returning a value between -Double.MAX_VALUE and Double.MAX_VALUE signifying
    * the strength of the given move.
    * 
    * @param color the turn of the current player (determined by color)
@@ -46,23 +44,23 @@ public class AI {
     if (board.hasNetwork(color)) {
       return Double.MAX_VALUE;
     }
-    if (board.hasNetwork(-color)) {
+    if (board.hasNetwork(invertColor(color))) {
       return -Double.MAX_VALUE;
     }
 
     //Size of largest Network
     ourNetworkLength = board.longestPathLength(color);
-    opponentNetworkLength = board.longestPathLength(-color);
+    opponentNetworkLength = board.longestPathLength(invertColor(color));
     netLength = ourNetworkLength - opponentNetworkLength;
 
-    //Number of current connections
+    //Number of current connections, and measures central tendencies
     for (Object pos : board.locationOfPieces(color)) {
       curr = (int[]) pos;
       connections += board.connectedChips(curr).length();
       central = central + (Math.abs(curr[0] - centralPosition) + Math.abs(curr[1] - centralPosition))
           / 2;
     }
-    for (Object pos : board.locationOfPieces(-color)) {
+    for (Object pos : board.locationOfPieces(invertColor(color))) {
       curr = (int[]) pos;
       connections -= board.connectedChips(curr).length();
       central = central - (Math.abs(curr[0] - centralPosition) + Math.abs(curr[1] - centralPosition))
@@ -71,7 +69,7 @@ public class AI {
 
     //Number of possible moves
     possibleMoves = board.allValidMoves(color).length()
-        - board.allValidMoves(-color).length();
+        - board.allValidMoves(invertColor(color)).length();
 
     connections /= 2; //b/c doublecounted
     connections /= 40; //scale down connections
@@ -82,7 +80,7 @@ public class AI {
     netLength *= longestNetworkWeight;
     central = central
         / (board.locationOfPieces(color).length() + board.locationOfPieces(
-            -color).length());
+            invertColor(color)).length());
     central *= centralWeight;
 
     return connections + possibleMoves + netLength + central;
@@ -135,7 +133,7 @@ public class AI {
     Object[] optimalMove = new Object[] { null, 0.0 };
     Object[] replyMove;
 
-    if (depth == 0 || board.hasNetwork(AIcolor) || board.hasNetwork(-AIcolor)) {
+    if (depth == 0 || board.hasNetwork(AIcolor) || board.hasNetwork(invertColor(AIcolor))) {
       optimalMove[1] = eval(AIcolor, board);
       return optimalMove;
     }
@@ -149,7 +147,7 @@ public class AI {
     for (Object o : board.allValidMoves(color)) {
       Move m = (Move) o;
       board.makeMove(color, m);
-      replyMove = bestMoveHelper(-color, AIcolor, board, depth - 1, alpha, beta);
+      replyMove = bestMoveHelper(invertColor(color), AIcolor, board, depth - 1, alpha, beta);
       Double heuristic = (Double) replyMove[1];
       board.unmakeMove(color, m);
 
@@ -158,7 +156,7 @@ public class AI {
         optimalMove[1] = heuristic;
         alpha = heuristic;
       }
-      else if (color == -AIcolor && (Double) optimalMove[1] >= heuristic) {
+      else if (color == invertColor(AIcolor) && (Double) optimalMove[1] >= heuristic) {
         optimalMove[0] = m;
         optimalMove[1] = heuristic;
         beta = heuristic;
@@ -169,6 +167,23 @@ public class AI {
       }
     }
     return optimalMove;
+  }
+  
+  /**
+   * Inverts a color. Ie. Black returns White, White returns Black, and Empty returns Empty
+   * @param color The color that we want to invert
+   * @return The opposite of the color we inverted
+   * 
+   * @author Alec Mouri
+   */
+  private static int invertColor(int color){
+    if(color == Board.WHITE){
+      return Board.BLACK;
+	} else if (color == Board.BLACK){
+	  return Board.WHITE;
+	} else {
+	  return Board.EMPTY;
+	}
   }
 
 }
