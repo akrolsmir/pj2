@@ -34,7 +34,12 @@ the depth is considered a limitation (search levels). The default number of sear
 levels set by the one-parameter MachinePlayer constructor is 2.
 
 Describe your board evaluation function in some detail.
+The board evaluation function returns a linear combination of the total number of
+connected chips between pieces, the total number of possible moves, a measure of
+the longest path length between both players, and a measure of central tendencies
+the pieces have on the board.
 
+Each of the quantities are given weights; the weights must add up to 1.
 
 Does your MachinePlayer use any special method of choosing the first few moves?
 For the first move, the MachinePlayer chooses (3,3) or (3,4) depending on the first 
