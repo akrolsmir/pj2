@@ -8,7 +8,7 @@ public class AI {
 
   /**
    * eval() analyzes the current board with respect to the current player 
-   * for a given move returning a value between -1.0 and 1.0 signifying
+   * for a given move returning a value between -Double.MAX_VALUE and Double.MAX_VALUE signifying
    * the strength of the given move.
    * 
    * @param color the turn of the current player (determined by color)
