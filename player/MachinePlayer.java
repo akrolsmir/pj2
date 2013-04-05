@@ -39,7 +39,7 @@ public class MachinePlayer extends Player {
 	long start = System.currentTimeMillis();
     Move move = AI.bestMove(color, board, searchDepth);
     board.makeMove(color, move);
-    System.out.println("chooseMove took: " + (System.currentTimeMillis() - start) + " ms");
+//    System.out.println("chooseMove took: " + (System.currentTimeMillis() - start) + " ms");
     return move;
   } 
 
