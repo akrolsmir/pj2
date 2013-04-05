@@ -197,7 +197,16 @@ public class Board {
     return true;
   }
 
-  public List locationOfPieces(int color) {
+  /**
+   * locationOfPieces() returns a list of all the given pieces of
+   * a player.
+   * 
+   * @param color the color of the pieces of the player
+   * @return a list of the location of the pieces
+   * 
+   * @author Austin Chen and Michael Liu
+   */
+public List locationOfPieces(int color) {
     // If the list was already calculated, use that.
     List rightList = color == WHITE ? whiteChips : blackChips;
     if (rightList != null) {

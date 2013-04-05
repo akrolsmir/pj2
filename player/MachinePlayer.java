@@ -16,7 +16,7 @@ public class MachinePlayer extends Player {
   // Creates a machine player with the given color.  Color is either 0 (black)
   // or 1 (white).  (White has the first move.)
   public MachinePlayer(int color) {
-    this(color, 3);
+    this(color, 2);
   }
 
   // Creates a machine player with the given color and search depth.  Color is
@@ -61,15 +61,6 @@ public class MachinePlayer extends Player {
   }
 
   public static void main(String args[]) {
-    MachinePlayer player = new MachinePlayer(0);
-    player.opponentMove(new Move(2, 0));
-    player.opponentMove(new Move(2, 5));
-    player.opponentMove(new Move(3, 5));
-    player.opponentMove(new Move(1, 3));
-    player.opponentMove(new Move(5, 5));
-    player.opponentMove(new Move(5, 7));
-    //opp's 33 wins
-    System.out.println(player.chooseMove() + ", should be 33");
   }
 
 }

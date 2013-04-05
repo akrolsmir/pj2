@@ -37,6 +37,8 @@ public class AI {
     double possibleMovesWeight = .35;
     double longestNetworkWeight = .15;
     double centralWeight = .10;
+    double centralPosition = (board.grid.length - 1) / 2.0;
+    
 
     int[] curr;
 
@@ -57,13 +59,13 @@ public class AI {
     for (Object pos : board.locationOfPieces(color)) {
       curr = (int[]) pos;
       connections += board.connectedChips(curr).length();
-      central = central + (Math.abs(curr[0] - 3.5) + Math.abs(curr[1] - 3.5))
+      central = central + (Math.abs(curr[0] - centralPosition) + Math.abs(curr[1] - centralPosition))
           / 2;
     }
     for (Object pos : board.locationOfPieces(-color)) {
       curr = (int[]) pos;
       connections -= board.connectedChips(curr).length();
-      central = central - (Math.abs(curr[0] - 3.5) + Math.abs(curr[1] - 3.5))
+      central = central - (Math.abs(curr[0] - centralPosition) + Math.abs(curr[1] - centralPosition))
           / 2;
     }
 
@@ -105,9 +107,12 @@ public class AI {
   /**
    * bestMoveHelper() returns an Object[] containing the strongest move for
    * the given player using our evaluation function along with the strength
-   * of the given move. It employs alpha-beta pruning.
+   * of the given move. It employs alpha-beta pruning. The alpha-beta pruning
+   * is based off of the psuedocode found here:
+   * http://www.cs.berkeley.edu/~jrs/61b/lec/17.pdf
    * 
    * @param color the turn of the current player (determined by color)
+   * @param AIcolor the color of the AI player
    * @param board the current state of the board
    * @param depth the depth to which eval() checks
    * @param alpha
